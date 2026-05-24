@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { DateFilter, DateRange } from '../types';
 
 const DATE_FILTERS: { key: DateFilter; label: string }[] = [

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSearch } from './hooks/useSearch';
 import { useAdFilters } from './hooks/useAdFilters';
 import { SearchBar } from './components/SearchBar';

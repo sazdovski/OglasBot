@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { Ad, SortState } from '../types';
 import { formatMKD, formatEUR } from '../utils/currency';
 import { format, isValid } from 'date-fns';

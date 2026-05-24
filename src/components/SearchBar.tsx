@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { DEBOUNCE_MS } from '../config/constants';
 
 interface SearchBarProps {
