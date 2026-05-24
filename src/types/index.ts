@@ -34,7 +34,7 @@ export interface SortState {
   direction: SortDirection;
 }
 
-export type DateFilter = 'today' | 'week' | 'month' | '30days' | '3months' | '6months' | '1year' | 'all' | 'custom';
+export type DateFilter = 'today' | 'week' | 'month' | '30days' | '3months' | '6months' | '1year' | 'this_year' | 'all' | 'custom';
 
 export interface DateRange {
   from: Date | null;

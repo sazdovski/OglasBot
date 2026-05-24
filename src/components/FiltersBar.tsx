@@ -6,12 +6,25 @@ const DATE_FILTERS: { key: DateFilter; label: string }[] = [
   { key: 'today', label: 'Today' },
   { key: 'week', label: 'This Week' },
   { key: 'month', label: 'This Month' },
-  { key: '30days', label: 'Last 30 Days' },
-  { key: '3months', label: 'Last 3 Months' },
-  { key: '6months', label: 'Last 6 Months' },
-  { key: '1year', label: 'Last 1 Year' },
-  { key: 'custom', label: 'Custom Range' },
+  { key: '30days', label: '30 Days' },
+  { key: '3months', label: '3 Months' },
+  { key: '6months', label: '6 Months' },
+  { key: '1year', label: '1 Year' },
+  { key: 'this_year', label: 'This Year' },
+  { key: 'custom', label: 'Custom' },
 ];
+
+function Divider() {
+  return <div className="w-px h-5 bg-[#21262d] shrink-0" />;
+}
+
+function CheckIcon() {
+  return (
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
 
 interface FiltersBarProps {
   filter: string;
@@ -84,189 +97,209 @@ export function FiltersBar({
   }, [selectedCategories, onSelectedCategoriesChange]);
 
   return (
-    <div className="flex flex-wrap gap-3 items-center">
-      {/* Text filter */}
-      <div className="relative flex-1" style={{ minWidth: '200px' }}>
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">🔎</span>
-        <input
-          type="text"
-          placeholder="Filter results..."
-          value={filter}
-          onChange={e => onFilterChange(e.target.value)}
-          className="w-full bg-[#161b22] border border-[#30363d] rounded-lg pl-9 pr-4 py-2 text-sm text-gray-200
-            placeholder-gray-600 focus:outline-none focus:border-blue-500 transition-colors"
-        />
-      </div>
+    <div className="rounded-xl border border-[#21262d] bg-[#0d1117] divide-y divide-[#21262d]">
 
-      {/* Category multiselect */}
-      {availableCategories.length > 0 && (
-        <div className="relative" ref={catRef}>
-          <button
-            onClick={() => setCatOpen(o => !o)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap
-              ${
-                selectedCategories.length > 0
-                  ? 'bg-violet-900/60 text-violet-300 border border-violet-700'
-                  : 'bg-[#21262d] text-gray-400 hover:text-gray-200 hover:bg-[#30363d]'
-              }`}
-          >
-            Categories
-            {selectedCategories.length > 0 && (
-              <span className="bg-violet-600 text-white rounded-full px-1.5 py-0 text-[10px] font-bold">
-                {selectedCategories.length}
-              </span>
-            )}
-            <span className="text-gray-500">{catOpen ? '▲' : '▼'}</span>
-          </button>
-          {catOpen && (
-            <div className="absolute top-full left-0 mt-1 z-30 bg-[#161b22] border border-[#30363d] rounded-lg shadow-xl min-w-48 max-h-72 overflow-y-auto">
-              {selectedCategories.length > 0 && (
-                <div className="px-3 py-1.5 border-b border-[#30363d]">
-                  <button
-                    onClick={() => onSelectedCategoriesChange([])}
-                    className="text-[10px] text-violet-400 hover:text-violet-200 transition-colors"
-                  >
-                    Clear all
-                  </button>
-                </div>
-              )}
-              {availableCategories.map(cat => (
-                <label
-                  key={cat}
-                  className="flex items-center gap-2.5 px-3 py-2 text-sm text-gray-300 hover:bg-[#21262d] cursor-pointer transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(cat)}
-                    onChange={() => toggleCategory(cat)}
-                    className="accent-violet-500 w-3.5 h-3.5 rounded"
-                  />
-                  {cat}
-                </label>
-              ))}
-            </div>
+      {/* ── Row 1: Controls ─────────────────────────────────────── */}
+      <div className="flex items-center h-11 overflow-visible">
+
+        {/* Text filter */}
+        <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-full">
+          <svg className="shrink-0 text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Filter results..."
+            value={filter}
+            onChange={e => onFilterChange(e.target.value)}
+            className="flex-1 min-w-0 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+          />
+          {filter && (
+            <button onClick={() => onFilterChange('')} className="shrink-0 text-gray-600 hover:text-gray-400 transition-colors">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6 6 18M6 6l12 12" />
+              </svg>
+            </button>
           )}
         </div>
-      )}
 
-      {/* Source toggles */}
-      <div className="flex gap-1.5">
-        <button
-          onClick={() => onShowReklama5Change(!showReklama5)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap
-            ${showReklama5
-              ? 'bg-orange-900/60 text-orange-300 border border-orange-700'
-              : 'bg-[#21262d] text-gray-500 hover:bg-[#30363d]'}
-          `}
-        >
-          Reklama5
-        </button>
-        <button
-          onClick={() => onShowPazar3Change(!showPazar3)}
-          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap
-            ${showPazar3
-              ? 'bg-blue-900/60 text-blue-300 border border-blue-700'
-              : 'bg-[#21262d] text-gray-500 hover:bg-[#30363d]'}
-          `}
-        >
-          Pazar3
-        </button>
+        {/* Category multiselect */}
+        {availableCategories.length > 0 && (
+          <>
+            <Divider />
+            <div className="relative shrink-0 h-full flex items-center px-4" ref={catRef}>
+              <button
+                onClick={() => setCatOpen(o => !o)}
+                className={`flex items-center gap-1.5 text-xs font-medium transition-colors whitespace-nowrap
+                  ${selectedCategories.length > 0 ? 'text-violet-400' : 'text-gray-500 hover:text-gray-300'}`}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M4 6h16M4 12h8M4 18h4" />
+                </svg>
+                Category
+                {selectedCategories.length > 0 && (
+                  <span className="bg-violet-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold leading-none">
+                    {selectedCategories.length}
+                  </span>
+                )}
+              </button>
+
+              {catOpen && (
+                <div className="absolute top-[calc(100%+8px)] left-0 z-50 bg-[#0d1117] border border-[#30363d] rounded-xl shadow-2xl shadow-black/50 w-60 max-h-72 overflow-y-auto">
+                  <div className="px-4 py-2.5 border-b border-[#21262d] flex items-center justify-between">
+                    <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">Categories</span>
+                    {selectedCategories.length > 0 && (
+                      <button
+                        onClick={() => onSelectedCategoriesChange([])}
+                        className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  {availableCategories.map(cat => {
+                    const checked = selectedCategories.includes(cat);
+                    return (
+                      <label
+                        key={cat}
+                        className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-[#161b22] transition-colors"
+                      >
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all
+                          ${checked ? 'bg-violet-600 border-violet-600' : 'border-[#30363d] bg-transparent'}`}>
+                          {checked && <CheckIcon />}
+                        </div>
+                        <input type="checkbox" className="sr-only" checked={checked} onChange={() => toggleCategory(cat)} />
+                        <span className="text-xs text-gray-300 leading-snug">{cat}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+
+        <Divider />
+
+        {/* Source toggles */}
+        <div className="flex items-center gap-1 shrink-0 h-full px-3">
+          <button
+            onClick={() => onShowReklama5Change(!showReklama5)}
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
+              ${showReklama5 ? 'bg-orange-500/15 text-orange-400' : 'text-gray-600 hover:text-gray-400'}`}
+          >
+            Reklama5
+          </button>
+          <button
+            onClick={() => onShowPazar3Change(!showPazar3)}
+            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
+              ${showPazar3 ? 'bg-blue-500/15 text-blue-400' : 'text-gray-600 hover:text-gray-400'}`}
+          >
+            Pazar3
+          </button>
+        </div>
+
+        <Divider />
+
+        {/* Hide no price */}
+        <div className="shrink-0 h-full flex items-center px-4">
+          <button
+            onClick={() => onHideNoPriceChange(!hideNoPrice)}
+            className={`flex items-center gap-2 text-xs font-medium transition-colors
+              ${hideNoPrice ? 'text-emerald-400' : 'text-gray-600 hover:text-gray-400'}`}
+          >
+            <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-all
+              ${hideNoPrice ? 'bg-emerald-600 border-emerald-600' : 'border-[#30363d]'}`}>
+              {hideNoPrice && <CheckIcon />}
+            </div>
+            No Price
+          </button>
+        </div>
+
+        <Divider />
+
+        {/* Exchange rate */}
+        <div className="shrink-0 h-full flex items-center px-4">
+          {showRateEditor ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-gray-600 text-xs">1€ =</span>
+              <input
+                ref={rateRef}
+                type="number"
+                value={rateInput}
+                onChange={e => setRateInput(e.target.value)}
+                onBlur={() => {
+                  const val = parseFloat(rateInput);
+                  if (!isNaN(val) && val > 0) onExchangeRateChange(val);
+                  setShowRateEditor(false);
+                }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
+                  if (e.key === 'Escape') { setRateInput(String(exchangeRate)); setShowRateEditor(false); }
+                }}
+                className="w-16 bg-[#161b22] border border-[#30363d] rounded-md px-2 py-1 text-xs text-gray-200 focus:outline-none focus:border-blue-500 transition-colors"
+              />
+              <span className="text-gray-600 text-xs">МКД</span>
+            </div>
+          ) : (
+            <button
+              onClick={() => { setRateInput(String(exchangeRate)); setShowRateEditor(true); }}
+              className="text-xs text-gray-600 hover:text-gray-400 transition-colors whitespace-nowrap"
+              title="Click to edit exchange rate"
+            >
+              1€ = {exchangeRate} МКД
+            </button>
+          )}
+        </div>
+
+        {/* Count */}
+        {totalCount > 0 && (
+          <>
+            <Divider />
+            <div className="shrink-0 px-4 flex items-center h-full">
+              <span className="text-gray-600 text-xs whitespace-nowrap tabular-nums">
+                {filteredCount === totalCount
+                  ? `${totalCount} ads`
+                  : `${filteredCount} / ${totalCount} ads`}
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Hide no price */}
-      <button
-        onClick={() => onHideNoPriceChange(!hideNoPrice)}
-        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap
-          ${hideNoPrice
-            ? 'bg-emerald-700 text-emerald-100'
-            : 'bg-[#21262d] text-gray-400 hover:text-gray-200 hover:bg-[#30363d]'}
-        `}
-      >
-        {hideNoPrice ? '✓ Hide No Price' : 'Hide No Price'}
-      </button>
-
-      {/* Date filter pills */}
-      <div className="flex flex-wrap gap-1.5">
+      {/* ── Row 2: Date filters ──────────────────────────────────── */}
+      <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto">
         {DATE_FILTERS.map(df => (
           <button
             key={df.key}
             onClick={() => onDateFilterChange(df.key)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap shrink-0
               ${dateFilter === df.key
-                ? 'bg-blue-600 text-white'
-                : 'bg-[#21262d] text-gray-400 hover:text-gray-200 hover:bg-[#30363d]'}
-            `}
+                ? 'bg-[#21262d] text-white'
+                : 'text-gray-600 hover:text-gray-400'}`}
           >
             {df.label}
           </button>
         ))}
-      </div>
-
-      {/* Custom date range */}
-      {dateFilter === 'custom' && (
-        <div className="flex gap-2 items-center">
-          <input
-            type="date"
-            value={dateRange.from ? dateRange.from.toISOString().split('T')[0] : ''}
-            onChange={e => onDateRangeChange({ ...dateRange, from: e.target.value ? new Date(e.target.value) : null })}
-            className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-sm text-gray-300
-              focus:outline-none focus:border-blue-500 transition-colors"
-          />
-          <span className="text-gray-500 text-sm">to</span>
-          <input
-            type="date"
-            value={dateRange.to ? dateRange.to.toISOString().split('T')[0] : ''}
-            onChange={e => onDateRangeChange({ ...dateRange, to: e.target.value ? new Date(e.target.value) : null })}
-            className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-sm text-gray-300
-              focus:outline-none focus:border-blue-500 transition-colors"
-          />
-        </div>
-      )}
-
-      {/* Exchange rate */}
-      <div className="relative">
-        {showRateEditor ? (
-          <div className="flex items-center gap-2">
-            <span className="text-gray-500 text-xs">1€ =</span>
+        {dateFilter === 'custom' && (
+          <div className="flex items-center gap-2 ml-2 shrink-0">
             <input
-              ref={rateRef}
-              type="number"
-              value={rateInput}
-              onChange={e => setRateInput(e.target.value)}
-              onBlur={() => {
-                const val = parseFloat(rateInput);
-                if (!isNaN(val) && val > 0) onExchangeRateChange(val);
-                setShowRateEditor(false);
-              }}
-              onKeyDown={e => {
-                if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
-                if (e.key === 'Escape') { setRateInput(String(exchangeRate)); setShowRateEditor(false); }
-              }}
-              className="w-20 bg-[#161b22] border border-blue-500 rounded-lg px-2 py-1.5 text-sm text-gray-200
-                focus:outline-none"
+              type="date"
+              value={dateRange.from ? dateRange.from.toISOString().split('T')[0] : ''}
+              onChange={e => onDateRangeChange({ ...dateRange, from: e.target.value ? new Date(e.target.value) : null })}
+              className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <span className="text-gray-500 text-xs">МКД</span>
+            <span className="text-gray-600 text-xs">—</span>
+            <input
+              type="date"
+              value={dateRange.to ? dateRange.to.toISOString().split('T')[0] : ''}
+              onChange={e => onDateRangeChange({ ...dateRange, to: e.target.value ? new Date(e.target.value) : null })}
+              className="bg-[#161b22] border border-[#30363d] rounded-lg px-3 py-1.5 text-xs text-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
+            />
           </div>
-        ) : (
-          <button
-            onClick={() => { setRateInput(String(exchangeRate)); setShowRateEditor(true); }}
-            className="px-3 py-1.5 rounded-lg bg-[#21262d] text-xs text-gray-400 hover:text-gray-200
-              hover:bg-[#30363d] transition-colors whitespace-nowrap"
-            title="Click to edit exchange rate"
-          >
-            1€ = {exchangeRate} МКД
-          </button>
         )}
       </div>
 
-      {/* Count */}
-      {totalCount > 0 && (
-        <span className="text-gray-500 text-xs whitespace-nowrap">
-          {filteredCount === totalCount
-            ? `${totalCount} ads`
-            : `${filteredCount} / ${totalCount} ads`}
-        </span>
-      )}
     </div>
   );
 }

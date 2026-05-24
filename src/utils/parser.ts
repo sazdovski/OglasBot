@@ -12,6 +12,8 @@ const MK_MONTHS: Record<string, number> = {
 
 export function parseMkDate(dateStr: string): Date {
   const trimmed = dateStr.trim();
+  if (!trimmed) return new Date(0);
+
   const parts = trimmed.split(' ').filter(Boolean);
   if (parts.length === 0) return new Date(0);
 
@@ -37,29 +39,40 @@ export function parseMkDate(dateStr: string): Date {
     return d;
   }
 
-  // Format: "22 мај 11:00" or "22 мај"
+  // Format: "22 May 14:16" or "22 мај 11:00" (no year)
+  // Format: "22 May 2026 14:16" (with year)
   if (parts.length < 2) return new Date(0);
 
   const day = parseInt(parts[0], 10);
+  if (isNaN(day)) return new Date(0);
+
   const monthStr = parts[1].toLowerCase();
   const month = MK_MONTHS[monthStr];
   if (month === undefined) return new Date(0);
-  let year = now.getFullYear();
 
-  // If month is in the future, it must be last year
-  if (month > now.getMonth()) {
-    year = year - 1;
+  // Detect whether parts[2] is a year (4-digit number) or a time
+  let year = now.getFullYear();
+  let timeStr: string | undefined;
+
+  if (parts[2] && /^\d{4}$/.test(parts[2])) {
+    year = parseInt(parts[2], 10);
+    timeStr = parts[3];
+  } else {
+    // No explicit year — infer: if month is ahead of current, it's last year
+    if (month > now.getMonth()) year = year - 1;
+    timeStr = parts[2];
   }
 
   let hours = 0;
   let minutes = 0;
-  if (parts[2] && parts[2].includes(':')) {
-    const [h, m] = parts[2].split(':').map(Number);
-    hours = h;
-    minutes = m;
+  if (timeStr?.includes(':')) {
+    const [h, m] = timeStr.split(':').map(Number);
+    if (!isNaN(h)) hours = h;
+    if (!isNaN(m)) minutes = m;
   }
 
-  return new Date(year, month, day, hours, minutes);
+  const result = new Date(year, month, day, hours, minutes);
+  return isNaN(result.getTime()) ? new Date(0) : result;
 }
 
 export function parsePrice(raw: string): { value: number | null; currency: 'MKD' | 'EUR' | null } {

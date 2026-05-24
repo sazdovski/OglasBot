@@ -3,6 +3,15 @@ import type { Ad, SortState } from '../types';
 import { formatMKD, formatEUR } from '../utils/currency';
 import { format, isValid } from 'date-fns';
 
+function safeFormat(date: Date, fmt: string, fallback: string): string {
+  try {
+    if (!date || !isValid(date) || isNaN(date.getTime())) return fallback;
+    return format(date, fmt);
+  } catch {
+    return fallback;
+  }
+}
+
 interface Column {
   key: keyof Ad;
   label: string;
@@ -75,7 +84,7 @@ const COLUMNS: Column[] = [
     minWidth: '130px',
     render: (ad) => (
       <span className="text-gray-400 text-sm whitespace-nowrap">
-        {(!isValid(ad.date) || ad.date.getTime() === 0) ? ad.dateFormatted : format(ad.date, 'dd MMM yyyy HH:mm')}
+        {safeFormat(ad.date, 'dd MMM yyyy HH:mm', ad.dateFormatted)}
       </span>
     ),
   },

@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import type { Ad, DateFilter, DateRange, SortState } from '../types';
-import { startOfDay, startOfWeek, startOfMonth, subDays, subMonths, subYears } from 'date-fns';
+import { startOfDay, startOfWeek, startOfMonth, startOfYear, subDays, subMonths, subYears } from 'date-fns';
 
 export function useAdFilters(ads: Ad[]) {
   const [filter, setFilter] = useState('');
@@ -77,6 +77,9 @@ export function useAdFilters(ads: Ad[]) {
       result = result.filter(a => a.date >= start);
     } else if (dateFilter === '1year') {
       const start = startOfDay(subYears(now, 1));
+      result = result.filter(a => a.date >= start);
+    } else if (dateFilter === 'this_year') {
+      const start = startOfYear(now);
       result = result.filter(a => a.date >= start);
     } else if (dateFilter === 'custom' && dateRange.from) {
       const from = startOfDay(dateRange.from);
