@@ -1,6 +1,6 @@
-import type { IncomingMessage, ServerResponse } from 'http';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(req: IncomingMessage, res: ServerResponse) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const qs = req.url?.includes('?') ? req.url.split('?')[1] : '';
   const target = `https://www.pazar3.mk/Search/AjaxSearch?${qs}`;
   try {
@@ -12,9 +12,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     });
     const json = await upstream.text();
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(json);
+    res.send(json);
   } catch (err) {
-    res.statusCode = 502;
-    res.end(String(err));
+    res.status(502).send(String(err));
   }
 }
