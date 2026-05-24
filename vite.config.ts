@@ -52,6 +52,5 @@ function searchProxyPlugin(): Plugin {
 }
 
 export default defineConfig({
-  base: '/OglasBot/',
   plugins: [react(), tailwindcss(), searchProxyPlugin()],
 })
