@@ -138,7 +138,69 @@ function SortIcon({ column, sort }: { column: keyof Ad; sort: SortState }) {
 
 export function AdTable({ ads, sort, onSort }: AdTableProps) {
   return (
-    <div className="overflow-auto rounded-xl border border-[#30363d] shadow-lg">
+    <div>
+      {/* ── Mobile card view ─────────────────────────── */}
+      <div className="md:hidden flex flex-col gap-3">
+        {ads.map((ad) => (
+          <div key={ad.id} className="rounded-xl border border-[#30363d] bg-[#0d1117] p-4 flex flex-col gap-2.5">
+            <div className="flex items-start gap-3">
+              {ad.imageUrl && (
+                <img
+                  src={ad.imageUrl}
+                  alt=""
+                  className="w-14 h-14 object-cover rounded-md shrink-0"
+                  loading="lazy"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+              <a
+                href={ad.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 text-sm font-medium text-gray-200 hover:text-blue-400 transition-colors leading-snug"
+              >
+                {ad.title}
+              </a>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              {ad.priceMKD ? (
+                <span className="text-emerald-400 font-semibold text-sm">{formatMKD(ad.priceMKD)}</span>
+              ) : null}
+              {ad.priceEUR ? (
+                <span className="text-blue-400 font-semibold text-sm">{formatEUR(ad.priceEUR)}</span>
+              ) : null}
+              {!ad.priceMKD && !ad.priceEUR && (
+                <span className="text-gray-500 text-xs">No price</span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 flex-wrap text-xs text-gray-500">
+              <span>{safeFormat(ad.date, 'dd MMM yyyy', ad.dateFormatted)}</span>
+              {ad.city && <><span>·</span><span className="text-gray-400">{ad.city}</span></>}
+              {ad.category && (
+                <span className="px-2 py-0.5 rounded-full bg-[#21262d] text-gray-300">{ad.category}</span>
+              )}
+              <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                ad.source === 'reklama5' ? 'bg-orange-900 text-orange-300' : 'bg-blue-900 text-blue-300'
+              }`}>
+                {ad.source === 'reklama5' ? 'Reklama5' : 'Pazar3'}
+              </span>
+              <button
+                onClick={() => navigator.clipboard.writeText(ad.url)}
+                className="ml-auto p-1.5 rounded bg-[#21262d] hover:bg-[#30363d] text-gray-400 hover:text-white transition-colors"
+                title="Copy URL"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Desktop table view ───────────────────────── */}
+      <div className="hidden md:block overflow-auto rounded-xl border border-[#30363d] shadow-lg">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="bg-[#161b22] border-b border-[#30363d]">
@@ -189,6 +251,7 @@ export function AdTable({ ads, sort, onSort }: AdTableProps) {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }

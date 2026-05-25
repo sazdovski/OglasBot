@@ -32,7 +32,7 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
 
   return (
     <div className="flex flex-col gap-3">
-      <form onSubmit={handleSubmit} className="flex gap-3">
+      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 sm:gap-3">
         <div className="relative flex-1">
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">🔍</span>
           <input
@@ -45,32 +45,34 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
               transition-all shadow-sm"
           />
         </div>
-        <button
-          type="submit"
-          disabled={loading || !value.trim()}
-          className="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
-            text-white font-semibold text-sm transition-colors shadow-sm whitespace-nowrap"
-        >
-          Search
-        </button>
-        {loading ? (
+        <div className="flex gap-2 sm:gap-3">
           <button
-            type="button"
-            onClick={onCancel}
-            className="px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors"
+            type="submit"
+            disabled={loading || !value.trim()}
+            className="flex-1 sm:flex-none px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
+              text-white font-semibold text-sm transition-colors shadow-sm whitespace-nowrap"
           >
-            Cancel
+            Search
           </button>
-        ) : lastUpdated ? (
-          <button
-            type="button"
-            onClick={onRefresh}
-            className="px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors"
-            title="Refresh results"
-          >
-            ↺
-          </button>
-        ) : null}
+          {loading ? (
+            <button
+              type="button"
+              onClick={onCancel}
+              className="flex-1 sm:flex-none px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors whitespace-nowrap"
+            >
+              Cancel
+            </button>
+          ) : lastUpdated ? (
+            <button
+              type="button"
+              onClick={onRefresh}
+              className="px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors"
+              title="Refresh results"
+            >
+              ↺
+            </button>
+          ) : null}
+        </div>
       </form>
 
       {loading && (

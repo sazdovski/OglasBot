@@ -12,6 +12,7 @@ interface UseSearchReturn {
   search: (keyword: string) => void;
   refresh: () => void;
   cancelSearch: () => void;
+  reset: () => void;
 }
 
 export function useSearch(): UseSearchReturn {
@@ -61,6 +62,15 @@ export function useSearch(): UseSearchReturn {
     setLoading(false);
   }, []);
 
+  const reset = useCallback(() => {
+    abortRef.current?.abort();
+    setAds([]);
+    setError(null);
+    setLoading(false);
+    setCurrentPage(0);
+    setLastKeyword('');
+  }, []);
+
   const refresh = useCallback(() => {
     if (lastKeyword) runSearch(lastKeyword);
   }, [lastKeyword, runSearch]);
@@ -75,5 +85,6 @@ export function useSearch(): UseSearchReturn {
     search: runSearch,
     refresh,
     cancelSearch,
+    reset,
   };
 }

@@ -63,12 +63,16 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry: () 
 
 export function WelcomeState() {
   return (
-    <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="text-6xl mb-4">🤖</div>
-      <p className="text-gray-200 text-2xl font-bold mb-2">OglasBot</p>
-      <p className="text-gray-500 text-sm">
-        Search for any item on reklama5.mk — enter a keyword above to get started
+    <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center px-4">
+      <div className="text-6xl mb-5">🤖</div>
+      <h1 className="text-gray-100 text-3xl sm:text-4xl font-bold mb-3 tracking-tight">OglasBot</h1>
+      <p className="text-gray-400 text-base sm:text-lg mb-2 max-w-md">
+        Search across <span className="text-orange-400 font-medium">reklama5.mk</span> and <span className="text-blue-400 font-medium">pazar3.mk</span> simultaneously.
       </p>
+      <p className="text-gray-600 text-sm max-w-sm">
+        Find any listing — compare prices, filter by date, city, or category, all in one place.
+      </p>
+      <p className="mt-8 text-gray-600 text-sm">↑ Enter a keyword above to get started</p>
     </div>
   );
 }

@@ -14,8 +14,9 @@ export default function App() {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE);
   const [exchangeRate, setRate] = useState(getExchangeRate());
+  const [searchKey, setSearchKey] = useState(0);
 
-  const { ads, loading, error, totalCount, lastUpdated, currentPage, search, refresh, cancelSearch } = useSearch();
+  const { ads, loading, error, totalCount, lastUpdated, currentPage, search, refresh, cancelSearch, reset } = useSearch();
 
   const {
     filter, setFilter,
@@ -37,6 +38,14 @@ export default function App() {
     search(keyword);
   };
 
+  const handleReset = () => {
+    reset();
+    setHasSearched(false);
+    setLastKeyword('');
+    setPage(1);
+    setSearchKey(k => k + 1);
+  };
+
   const handleExchangeRateChange = (rate: number) => {
     setExchangeRate(rate);
     setRate(rate);
@@ -56,22 +65,29 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0d1117] text-gray-200">
       <header className="border-b border-[#21262d] bg-[#0d1117]/80 backdrop-blur sticky top-0 z-20">
-        <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-4">
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            title="Back to home"
+          >
             <span className="text-2xl">🤖</span>
             <span className="font-bold text-lg tracking-tight">OglasBot</span>
-            <span className="text-[10px] bg-orange-900/50 text-orange-400 border border-orange-800 px-1.5 py-0.5 rounded-full font-medium">
+          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="text-[10px] sm:text-[11px] bg-orange-900/50 text-orange-400 border border-orange-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
               reklama5.mk
             </span>
-            <span className="text-[10px] bg-blue-900/50 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded-full font-medium">
+            <span className="text-[10px] sm:text-[11px] bg-blue-900/50 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
               pazar3.mk
             </span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-screen-2xl mx-auto px-6 py-8 flex flex-col gap-6">
+      <main className="max-w-screen-2xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col gap-4 sm:gap-6">
         <SearchBar
+          key={searchKey}
           onSearch={handleSearch}
           onRefresh={refresh}
           onCancel={cancelSearch}
