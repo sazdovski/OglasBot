@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type { Ad } from '../types';
 import { formatMKD, formatEUR } from '../utils/currency';
 import { format, isValid } from 'date-fns';
