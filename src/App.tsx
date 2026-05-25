@@ -4,6 +4,7 @@ import { useAdFilters } from './hooks/useAdFilters';
 import { SearchBar } from './components/SearchBar';
 import { FiltersBar } from './components/FiltersBar';
 import { AdTable } from './components/AdTable';
+import { AdTiles } from './components/AdTiles';
 import { SkeletonTable, EmptyState, ErrorState, WelcomeState } from './components/States';
 import { setExchangeRate, getExchangeRate, computePriceStats } from './utils/currency';
 import { ITEMS_PER_PAGE } from './config/constants';
@@ -15,6 +16,7 @@ export default function App() {
   const [itemsPerPage, setItemsPerPage] = useState(ITEMS_PER_PAGE);
   const [exchangeRate, setRate] = useState(getExchangeRate());
   const [searchKey, setSearchKey] = useState(0);
+  const [viewMode, setViewMode] = useState<'table' | 'tiles'>('table');
 
   const { ads, loading, error, totalCount, lastUpdated, currentPage, search, refresh, cancelSearch, reset } = useSearch();
 
@@ -129,7 +131,49 @@ export default function App() {
 
         {showTable && (
           <>
-            <AdTable ads={paged} sort={sort} onSort={handleSort} />
+            {/* View mode switcher */}
+            <div className="flex items-center justify-end gap-1">
+              <button
+                onClick={() => setViewMode('table')}
+                title="Table view"
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'table'
+                    ? 'bg-[#30363d] text-white'
+                    : 'bg-transparent text-gray-500 hover:text-gray-300 hover:bg-[#21262d]'
+                }`}
+              >
+                {/* Table icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="3" y1="15" x2="21" y2="15"/>
+                  <line x1="9" y1="3" x2="9" y2="21"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('tiles')}
+                title="Tiles view"
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'tiles'
+                    ? 'bg-[#30363d] text-white'
+                    : 'bg-transparent text-gray-500 hover:text-gray-300 hover:bg-[#21262d]'
+                }`}
+              >
+                {/* Grid icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="1"/>
+                  <rect x="14" y="3" width="7" height="7" rx="1"/>
+                  <rect x="3" y="14" width="7" height="7" rx="1"/>
+                  <rect x="14" y="14" width="7" height="7" rx="1"/>
+                </svg>
+              </button>
+            </div>
+
+            {viewMode === 'table' ? (
+              <AdTable ads={paged} sort={sort} onSort={handleSort} />
+            ) : (
+              <AdTiles ads={paged} />
+            )}
 
             <div className="flex justify-center items-center gap-3 flex-wrap">
               {totalPages > 1 && (
