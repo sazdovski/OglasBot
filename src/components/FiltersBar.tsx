@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import type { DateFilter, DateRange } from '../types';
+import type { PriceStats } from '../utils/currency';
 
 const DATE_FILTERS: { key: DateFilter; label: string }[] = [
   { key: 'all', label: 'All Time' },
@@ -45,6 +46,7 @@ interface FiltersBarProps {
   availableCategories: string[];
   selectedCategories: string[];
   onSelectedCategoriesChange: (cats: string[]) => void;
+  priceStats?: PriceStats | null;
 }
 
 export function FiltersBar({
