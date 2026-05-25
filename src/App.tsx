@@ -35,6 +35,7 @@ export default function App() {
     setHasSearched(true);
     setLastKeyword(keyword);
     setPage(1);
+    setSelectedCategories([]);
     search(keyword);
   };
 
