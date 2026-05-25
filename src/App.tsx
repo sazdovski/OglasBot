@@ -5,7 +5,7 @@ import { SearchBar } from './components/SearchBar';
 import { FiltersBar } from './components/FiltersBar';
 import { AdTable } from './components/AdTable';
 import { SkeletonTable, EmptyState, ErrorState, WelcomeState } from './components/States';
-  import { setExchangeRate, getExchangeRate, computePriceStats } from './utils/currency';
+import { setExchangeRate, getExchangeRate, computePriceStats } from './utils/currency';
 import { ITEMS_PER_PAGE } from './config/constants';
 
 export default function App() {
