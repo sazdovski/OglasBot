@@ -69,6 +69,7 @@ export function FiltersBar({
   availableCategories,
   selectedCategories,
   onSelectedCategoriesChange,
+  priceStats,
 }: FiltersBarProps) {
   const [showRateEditor, setShowRateEditor] = useState(false);
   const [rateInput, setRateInput] = useState(String(exchangeRate));
@@ -125,7 +126,7 @@ export function FiltersBar({
         </div>
 
         {/* Mobile row 2 / Desktop inline: sources + category + no price */}
-        <div className="flex items-center h-10 md:h-full border-b border-[#21262d] md:border-b-0 overflow-visible">
+        <div className="flex items-center h-11 md:h-full border-b border-[#21262d] md:border-b-0 overflow-visible">
           <span className="hidden md:block w-px h-5 bg-[#21262d] shrink-0" />
 
           {/* Source toggles */}
@@ -221,7 +222,7 @@ export function FiltersBar({
         </div>{/* end mobile row 2 */}
 
         {/* Mobile row 3 / Desktop inline: exchange rate + count */}
-        <div className="flex items-center h-10 md:h-full overflow-x-auto md:overflow-visible">
+        <div className="flex items-center h-11 md:h-full overflow-x-auto md:overflow-visible">
           <span className="hidden md:block w-px h-5 bg-[#21262d] shrink-0" />
 
           {/* Exchange rate */}
@@ -273,6 +274,21 @@ export function FiltersBar({
           )}
         </div>{/* end mobile row 3 */}
       </div>
+
+      {/* ── Row 1b: Price stats ─────────────────────────────────── */}
+      {priceStats && (
+        <div className="flex items-center gap-1 px-4 h-9 overflow-x-auto">
+          <span className="text-[11px] text-gray-600 uppercase tracking-wider font-medium shrink-0">Price stats (€):</span>
+          <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
+          <span className="text-xs text-gray-500 shrink-0">P10 <span className="text-gray-300 font-medium tabular-nums">{priceStats.p10} €</span></span>
+          <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
+          <span className="text-xs text-gray-500 shrink-0">Median <span className="text-white font-semibold tabular-nums">{priceStats.median} €</span></span>
+          <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
+          <span className="text-xs text-gray-500 shrink-0">P90 <span className="text-gray-300 font-medium tabular-nums">{priceStats.p90} €</span></span>
+          <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
+          <span className="text-xs text-gray-500 shrink-0">Avg <span className="text-gray-300 font-medium tabular-nums">{priceStats.trimmedMean} €</span></span>
+        </div>
+      )}
 
       {/* ── Row 2: Date filters ──────────────────────────────────── */}
       <div className="flex items-center gap-1 px-3 py-2 overflow-x-auto">
