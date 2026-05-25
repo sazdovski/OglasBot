@@ -17,7 +17,7 @@ const BROWSER_HEADERS = {
 
 // Proxy: /api/search → reklama5.mk (HTML scrape)
 app.get('/api/search', async (req, res) => {
-  const qs = new URLSearchParams(req.query).toString();
+  const qs = req.originalUrl.includes('?') ? req.originalUrl.split('?')[1] : '';
   const target = `https://reklama5.mk/Search?${qs}`;
   try {
     const homeRes = await fetch('https://reklama5.mk/', { headers: BROWSER_HEADERS });
@@ -45,7 +45,7 @@ app.get('/api/search', async (req, res) => {
 
 // Proxy: /api/pazar3 → pazar3.mk (JSON API)
 app.get('/api/pazar3', async (req, res) => {
-  const qs = new URLSearchParams(req.query).toString();
+  const qs = req.originalUrl.includes('?') ? req.originalUrl.split('?')[1] : '';
   const target = `https://www.pazar3.mk/Search/AjaxSearch?${qs}`;
   try {
     const upstream = await fetch(target, {
