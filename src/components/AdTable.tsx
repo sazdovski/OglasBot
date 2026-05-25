@@ -59,7 +59,7 @@ const COLUMNS: Column[] = [
     key: 'priceMKD',
     label: 'Price (МКД)',
     sortable: true,
-    minWidth: '120px',
+    minWidth: '130px',
     render: (ad) => (
       <span className={ad.priceMKD ? 'text-emerald-400 font-semibold' : 'text-gray-500 text-sm'}>
         {formatMKD(ad.priceMKD)}
