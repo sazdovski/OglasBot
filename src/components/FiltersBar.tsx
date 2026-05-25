@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { DateFilter, DateRange } from '../types';
+import type { PriceStats } from '../utils/currency';
 
 const DATE_FILTERS: { key: DateFilter; label: string }[] = [
   { key: 'all', label: 'All Time' },
@@ -46,6 +47,7 @@ interface FiltersBarProps {
   availableCategories: string[];
   selectedCategories: string[];
   onSelectedCategoriesChange: (cats: string[]) => void;
+  priceStats: PriceStats | null;
 }
 
 export function FiltersBar({
@@ -68,6 +70,7 @@ export function FiltersBar({
   availableCategories,
   selectedCategories,
   onSelectedCategoriesChange,
+  priceStats,
 }: FiltersBarProps) {
   const [showRateEditor, setShowRateEditor] = useState(false);
   const [rateInput, setRateInput] = useState(String(exchangeRate));
@@ -252,7 +255,7 @@ export function FiltersBar({
           )}
         </div>
 
-        {/* Count */}
+        {/* Count + Price stats */}
         {totalCount > 0 && (
           <>
             <Divider />
@@ -261,6 +264,24 @@ export function FiltersBar({
                 {filteredCount === totalCount
                   ? `${totalCount} ads`
                   : `${filteredCount} / ${totalCount} ads`}
+              </span>
+            </div>
+          </>
+        )}
+        {priceStats && (
+          <>
+            <Divider />
+            <div className="shrink-0 px-4 flex items-center gap-2 h-full" title={`Based on ${priceStats.count} priced ads. Range excludes top & bottom 10%.`}>
+              <span className="text-gray-600 text-[11px] whitespace-nowrap">
+                <span className="text-gray-500">P10–P90</span>
+                {' '}
+                <span className="text-emerald-400 font-medium tabular-nums">€{priceStats.p10.toLocaleString()}–€{priceStats.p90.toLocaleString()}</span>
+              </span>
+              <span className="text-gray-700 text-[11px]">·</span>
+              <span className="text-gray-600 text-[11px] whitespace-nowrap">
+                <span className="text-gray-500">median</span>
+                {' '}
+                <span className="text-blue-400 font-medium tabular-nums">€{priceStats.median.toLocaleString()}</span>
               </span>
             </div>
           </>

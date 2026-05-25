@@ -5,7 +5,7 @@ import { SearchBar } from './components/SearchBar';
 import { FiltersBar } from './components/FiltersBar';
 import { AdTable } from './components/AdTable';
 import { SkeletonTable, EmptyState, ErrorState, WelcomeState } from './components/States';
-import { setExchangeRate, getExchangeRate } from './utils/currency';
+  import { setExchangeRate, getExchangeRate, computePriceStats } from './utils/currency';
 import { ITEMS_PER_PAGE } from './config/constants';
 
 export default function App() {
@@ -43,6 +43,7 @@ export default function App() {
     if (ads.length > 0) refresh();
   };
 
+  const priceStats = computePriceStats(filtered);
   const paged = filtered.slice((page - 1) * itemsPerPage, page * itemsPerPage);
   const totalPages = Math.max(1, Math.ceil(filtered.length / itemsPerPage));
 
@@ -100,6 +101,7 @@ export default function App() {
             availableCategories={availableCategories}
             selectedCategories={selectedCategories}
             onSelectedCategoriesChange={(cats) => { setSelectedCategories(cats); setPage(1); }}
+            priceStats={priceStats}
           />
         )}
 
