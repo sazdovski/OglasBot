@@ -37,7 +37,7 @@ function percentile(sorted: number[], p: number): number {
 export function computePriceStats(ads: Ad[]): PriceStats | null {
   const prices = ads
     .map(a => a.priceEUR)
-    .filter((p): p is number => p !== null && p > 0)
+    .filter((p): p is number => p !== null && p > 1)  // exclude no-price and dummy 1€/1den entries
     .sort((a, b) => a - b);
 
   if (prices.length < 3) return null;
