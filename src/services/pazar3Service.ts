@@ -11,6 +11,7 @@ interface Pazar3Item {
   HasPrice: boolean;
   Location: { Name: string };
   CreateDate: string;
+  ImageDate?: string;
   AdUrl: string;
   PrimaryImage: { Url: string } | null;
   Category: { Name: string } | null;
@@ -80,13 +81,22 @@ function mapItem(item: Pazar3Item): RawAd {
     ? (currency === 'EUR' ? `${item.Price} €` : `${item.Price} МКД`)
     : '';
 
+  // ImageDate is "YYYYMMDD" — use the year to disambiguate old ads whose
+  // CreateDate ("29 Sep 11:49") has no year component.
+  let dateStr = item.CreateDate ?? '';
+  if (item.ImageDate && item.ImageDate.length >= 4) {
+    const year = item.ImageDate.substring(0, 4);
+    // Insert year between month abbreviation and time: "29 Sep 11:49" → "29 Sep 2020 11:49"
+    dateStr = dateStr.replace(/^(\d{1,2}\s+\w+)\s+(\d{2}:\d{2})$/, `$1 ${year} $2`);
+  }
+
   return {
     adId: item.Id,
     title: item.Title,
     priceRaw,
     currency,
     city: item.Location?.Name ?? '',
-    date: item.CreateDate,
+    date: dateStr,
     imageUrl: item.PrimaryImage?.Url ?? '',
     url: `${PAZAR3_AD_BASE}${item.AdUrl}`,
     source: 'pazar3',
