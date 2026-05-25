@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import type { DateFilter, DateRange } from '../types';
-import type { PriceStats } from '../utils/currency';
 
 const DATE_FILTERS: { key: DateFilter; label: string }[] = [
   { key: 'all', label: 'All Time' },
@@ -11,7 +10,6 @@ const DATE_FILTERS: { key: DateFilter; label: string }[] = [
   { key: '3months', label: '3 Months' },
   { key: '6months', label: '6 Months' },
   { key: '1year', label: '1 Year' },
-  { key: 'this_year', label: 'This Year' },
   { key: 'custom', label: 'Custom' },
 ];
 
@@ -47,7 +45,6 @@ interface FiltersBarProps {
   availableCategories: string[];
   selectedCategories: string[];
   onSelectedCategoriesChange: (cats: string[]) => void;
-  priceStats: PriceStats | null;
 }
 
 export function FiltersBar({
@@ -70,7 +67,6 @@ export function FiltersBar({
   availableCategories,
   selectedCategories,
   onSelectedCategoriesChange,
-  priceStats,
 }: FiltersBarProps) {
   const [showRateEditor, setShowRateEditor] = useState(false);
   const [rateInput, setRateInput] = useState(String(exchangeRate));
@@ -103,10 +99,10 @@ export function FiltersBar({
     <div className="rounded-xl border border-[#21262d] bg-[#0d1117] divide-y divide-[#21262d]">
 
       {/* ── Row 1: Controls ─────────────────────────────────────── */}
-      <div className="flex items-center h-11 overflow-visible">
+      <div className="flex flex-col md:flex-row md:items-center md:h-11 overflow-visible">
 
-        {/* Text filter */}
-        <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-full">
+        {/* Mobile row 1 / Desktop: text filter */}
+        <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-11 border-b border-[#21262d] md:border-b-0">
           <svg className="shrink-0 text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
           </svg>
@@ -126,11 +122,33 @@ export function FiltersBar({
           )}
         </div>
 
-        {/* Category multiselect */}
-        {availableCategories.length > 0 && (
-          <>
-            <Divider />
-            <div className="relative shrink-0 h-full flex items-center px-4" ref={catRef}>
+        {/* Mobile row 2 / Desktop inline: sources + category + no price */}
+        <div className="flex items-center h-10 md:h-full border-b border-[#21262d] md:border-b-0 overflow-visible">
+          <span className="hidden md:block w-px h-5 bg-[#21262d] shrink-0" />
+
+          {/* Source toggles */}
+          <div className="flex items-center gap-1 shrink-0 h-full px-3">
+            <button
+              onClick={() => onShowReklama5Change(!showReklama5)}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
+                ${showReklama5 ? 'bg-orange-500/15 text-orange-400' : 'text-gray-600 hover:text-gray-400'}`}
+            >
+              Reklama5
+            </button>
+            <button
+              onClick={() => onShowPazar3Change(!showPazar3)}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
+                ${showPazar3 ? 'bg-blue-500/15 text-blue-400' : 'text-gray-600 hover:text-gray-400'}`}
+            >
+              Pazar3
+            </button>
+          </div>
+
+          {/* Category multiselect */}
+          {availableCategories.length > 0 && (
+            <>
+              <Divider />
+              <div className="relative shrink-0 h-full flex items-center px-4" ref={catRef}>
               <button
                 onClick={() => setCatOpen(o => !o)}
                 className={`flex items-center gap-1.5 text-xs font-medium transition-colors whitespace-nowrap
@@ -178,34 +196,14 @@ export function FiltersBar({
                   })}
                 </div>
               )}
-            </div>
-          </>
-        )}
+              </div>
+            </>
+          )}
 
-        <Divider />
+          <Divider />
 
-        {/* Source toggles */}
-        <div className="flex items-center gap-1 shrink-0 h-full px-3">
-          <button
-            onClick={() => onShowReklama5Change(!showReklama5)}
-            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
-              ${showReklama5 ? 'bg-orange-500/15 text-orange-400' : 'text-gray-600 hover:text-gray-400'}`}
-          >
-            Reklama5
-          </button>
-          <button
-            onClick={() => onShowPazar3Change(!showPazar3)}
-            className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
-              ${showPazar3 ? 'bg-blue-500/15 text-blue-400' : 'text-gray-600 hover:text-gray-400'}`}
-          >
-            Pazar3
-          </button>
-        </div>
-
-        <Divider />
-
-        {/* Hide no price */}
-        <div className="shrink-0 h-full flex items-center px-4">
+          {/* Hide no price */}
+          <div className="shrink-0 h-full flex items-center px-4">
           <button
             onClick={() => onHideNoPriceChange(!hideNoPrice)}
             className={`flex items-center gap-2 text-xs font-medium transition-colors
@@ -217,12 +215,15 @@ export function FiltersBar({
             </div>
             No Price
           </button>
-        </div>
+          </div>
+        </div>{/* end mobile row 2 */}
 
-        <Divider />
+        {/* Mobile row 3 / Desktop inline: exchange rate + count */}
+        <div className="flex items-center h-10 md:h-full overflow-x-auto md:overflow-visible">
+          <span className="hidden md:block w-px h-5 bg-[#21262d] shrink-0" />
 
-        {/* Exchange rate */}
-        <div className="shrink-0 h-full flex items-center px-4">
+          {/* Exchange rate */}
+          <div className="shrink-0 h-full flex items-center px-4">
           {showRateEditor ? (
             <div className="flex items-center gap-1.5">
               <span className="text-gray-600 text-xs">1€ =</span>
@@ -255,37 +256,20 @@ export function FiltersBar({
           )}
         </div>
 
-        {/* Count + Price stats */}
-        {totalCount > 0 && (
-          <>
-            <Divider />
-            <div className="shrink-0 px-4 flex items-center h-full">
-              <span className="text-gray-600 text-xs whitespace-nowrap tabular-nums">
-                {filteredCount === totalCount
-                  ? `${totalCount} ads`
-                  : `${filteredCount} / ${totalCount} ads`}
-              </span>
-            </div>
-          </>
-        )}
-        {priceStats && (
-          <>
-            <Divider />
-            <div className="shrink-0 px-4 flex items-center gap-2 h-full" title={`Based on ${priceStats.count} priced ads. Range excludes top & bottom 10%.`}>
-              <span className="text-gray-600 text-[11px] whitespace-nowrap">
-                <span className="text-gray-500">P10–P90</span>
-                {' '}
-                <span className="text-emerald-400 font-medium tabular-nums">€{priceStats.p10.toLocaleString()}–€{priceStats.p90.toLocaleString()}</span>
-              </span>
-              <span className="text-gray-700 text-[11px]">·</span>
-              <span className="text-gray-600 text-[11px] whitespace-nowrap">
-                <span className="text-gray-500">median</span>
-                {' '}
-                <span className="text-blue-400 font-medium tabular-nums">€{priceStats.median.toLocaleString()}</span>
-              </span>
-            </div>
-          </>
-        )}
+          {/* Count */}
+          {totalCount > 0 && (
+            <>
+              <Divider />
+              <div className="shrink-0 px-4 flex items-center h-full">
+                <span className="text-gray-600 text-xs whitespace-nowrap tabular-nums">
+                  {filteredCount === totalCount
+                    ? `${totalCount} ads`
+                    : `${filteredCount} / ${totalCount} ads`}
+                </span>
+              </div>
+            </>
+          )}
+        </div>{/* end mobile row 3 */}
       </div>
 
       {/* ── Row 2: Date filters ──────────────────────────────────── */}

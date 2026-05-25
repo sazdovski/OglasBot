@@ -39,6 +39,22 @@ export function parseMkDate(dateStr: string): Date {
     return d;
   }
 
+  // Handle "DD.MM.YYYY" or "DD.MM.YYYY HH:MM"
+  const dotDate = parts[0].match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (dotDate) {
+    const day = parseInt(dotDate[1], 10);
+    const month = parseInt(dotDate[2], 10) - 1;
+    const year = parseInt(dotDate[3], 10);
+    let hours = 0, minutes = 0;
+    if (parts[1]?.includes(':')) {
+      const [h, m] = parts[1].split(':').map(Number);
+      if (!isNaN(h)) hours = h;
+      if (!isNaN(m)) minutes = m;
+    }
+    const result = new Date(year, month, day, hours, minutes);
+    return isNaN(result.getTime()) ? new Date(0) : result;
+  }
+
   // Format: "22 May 14:16" or "22 мај 11:00" (no year)
   // Format: "22 May 2026 14:16" (with year)
   if (parts.length < 2) return new Date(0);
@@ -58,8 +74,10 @@ export function parseMkDate(dateStr: string): Date {
     year = parseInt(parts[2], 10);
     timeStr = parts[3];
   } else {
-    // No explicit year — infer: if month is ahead of current, it's last year
-    if (month > now.getMonth()) year = year - 1;
+    // No explicit year — infer: pick the most recent past occurrence of this month/day
+    const candidate = new Date(now.getFullYear(), month, day);
+    if (candidate > now) candidate.setFullYear(now.getFullYear() - 1);
+    year = candidate.getFullYear();
     timeStr = parts[2];
   }
 
