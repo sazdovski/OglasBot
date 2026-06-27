@@ -4,6 +4,7 @@ import { startOfDay, startOfWeek, startOfMonth, startOfYear, subDays, subMonths,
 
 export function useAdFilters(ads: Ad[]) {
   const [filter, setFilter] = useState('');
+  const [excludeFilter, setExcludeFilter] = useState('');
   const [dateFilter, setDateFilter] = useState<DateFilter>('all');
   const [dateRange, setDateRange] = useState<DateRange>({ from: null, to: null });
   const [sort, setSort] = useState<SortState>({ column: 'date', direction: 'desc' });
@@ -52,6 +53,16 @@ export function useAdFilters(ads: Ad[]) {
         a =>
           a.title.toLowerCase().includes(lower) ||
           a.city.toLowerCase().includes(lower)
+      );
+    }
+
+    // Exclude filter
+    if (excludeFilter.trim()) {
+      const lower = excludeFilter.toLowerCase();
+      result = result.filter(
+        a =>
+          !a.title.toLowerCase().includes(lower) &&
+          !a.city.toLowerCase().includes(lower)
       );
     }
 
@@ -112,11 +123,13 @@ export function useAdFilters(ads: Ad[]) {
     }
 
     return result;
-  }, [ads, filter, dateFilter, dateRange, sort, hideNoPrice, showReklama5, showPazar3, selectedCategories]);
+  }, [ads, filter, excludeFilter, dateFilter, dateRange, sort, hideNoPrice, showReklama5, showPazar3, selectedCategories]);
 
   return {
     filter,
     setFilter,
+    excludeFilter,
+    setExcludeFilter,
     dateFilter,
     setDateFilter,
     dateRange,

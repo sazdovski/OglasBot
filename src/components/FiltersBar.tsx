@@ -29,6 +29,8 @@ function CheckIcon() {
 interface FiltersBarProps {
   filter: string;
   onFilterChange: (v: string) => void;
+  excludeFilter: string;
+  onExcludeFilterChange: (v: string) => void;
   dateFilter: DateFilter;
   onDateFilterChange: (v: DateFilter) => void;
   dateRange: DateRange;
@@ -52,6 +54,8 @@ interface FiltersBarProps {
 export function FiltersBar({
   filter,
   onFilterChange,
+  excludeFilter,
+  onExcludeFilterChange,
   dateFilter,
   onDateFilterChange,
   dateRange,
@@ -104,25 +108,56 @@ export function FiltersBar({
       {/* ── Row 1: Controls ─────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center md:h-11 overflow-visible">
 
-        {/* Mobile row 1 / Desktop: text filter */}
-        <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-11 border-b border-[#21262d] md:border-b-0">
-          <svg className="shrink-0 text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-          </svg>
-          <input
-            type="text"
-            placeholder="Filter results..."
-            value={filter}
-            onChange={e => onFilterChange(e.target.value)}
-            className="flex-1 min-w-0 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
-          />
-          {filter && (
-            <button onClick={() => onFilterChange('')} className="shrink-0 text-gray-600 hover:text-gray-400 transition-colors">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            </button>
-          )}
+        {/* Mobile row 1 / Desktop: text filter + exclude filter */}
+        <div className="flex items-center flex-1 min-w-0 border-b border-[#21262d] md:border-b-0 divide-x divide-[#21262d]">
+          {/* Include filter */}
+          <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-11">
+            <svg className="shrink-0 text-gray-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Filter results..."
+              value={filter}
+              onChange={e => onFilterChange(e.target.value)}
+              className="flex-1 min-w-0 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
+            />
+            {filter && (
+              <button onClick={() => onFilterChange('')} className="shrink-0 text-gray-600 hover:text-gray-400 transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {/* Exclude filter */}
+          <div className="flex items-center gap-2 flex-1 min-w-0 px-4 h-11"
+            style={{ boxShadow: excludeFilter ? 'inset 0 0 0 1px rgba(239,68,68,0.35)' : undefined }}>
+            <svg className="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke={excludeFilter ? 'rgba(239,68,68,0.7)' : 'rgb(75,85,99)'} strokeWidth="2">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+              <path d="M7.5 7.5l7 7" strokeLinecap="round" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Excludes..."
+              value={excludeFilter}
+              onChange={e => onExcludeFilterChange(e.target.value)}
+              className="flex-1 min-w-0 bg-transparent text-sm placeholder-[rgba(239,68,68,0.4)] focus:outline-none"
+              style={{
+                color: excludeFilter ? 'rgba(239,68,68,0.85)' : undefined,
+                caretColor: 'rgba(239,68,68,0.85)',
+              }}
+            />
+            {excludeFilter && (
+              <button onClick={() => onExcludeFilterChange('')} className="shrink-0 text-red-500/50 hover:text-red-400 transition-colors">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile row 2 / Desktop inline: sources + category + no price */}

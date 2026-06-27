@@ -22,6 +22,7 @@ export default function App() {
 
   const {
     filter, setFilter,
+    excludeFilter, setExcludeFilter,
     dateFilter, setDateFilter,
     dateRange, setDateRange,
     sort, handleSort,
@@ -103,6 +104,8 @@ export default function App() {
           <FiltersBar
             filter={filter}
             onFilterChange={(v) => { setFilter(v); setPage(1); }}
+            excludeFilter={excludeFilter}
+            onExcludeFilterChange={(v) => { setExcludeFilter(v); setPage(1); }}
             dateFilter={dateFilter}
             onDateFilterChange={(v) => { setDateFilter(v); setPage(1); }}
             dateRange={dateRange}
