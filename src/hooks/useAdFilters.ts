@@ -41,9 +41,13 @@ export function useAdFilters(ads: Ad[]) {
       result = result.filter(a => selectedCategories.includes(a.category));
     }
 
-    // Hide no-price ads
+    // Hide no-price ads (also treat 1 MKD / 1 EUR as placeholder "no price")
     if (hideNoPrice) {
-      result = result.filter(a => a.priceMKD !== null || a.priceEUR !== null);
+      result = result.filter(a => {
+        const hasMKD = a.priceMKD !== null && a.priceMKD > 1;
+        const hasEUR = a.priceEUR !== null && a.priceEUR > 1;
+        return hasMKD || hasEUR;
+      });
     }
 
     // Text filter

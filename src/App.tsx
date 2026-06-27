@@ -39,6 +39,8 @@ export default function App() {
     setLastKeyword(keyword);
     setPage(1);
     setSelectedCategories([]);
+    setFilter('');
+    setExcludeFilter('');
     search(keyword);
   };
 
