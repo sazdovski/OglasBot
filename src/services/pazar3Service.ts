@@ -81,12 +81,23 @@ function mapItem(item: Pazar3Item): RawAd {
     ? (currency === 'EUR' ? `${item.Price} €` : `${item.Price} МКД`)
     : '';
 
-  // ImageDate is "YYYYMMDD" — use the year to disambiguate old ads whose
-  // CreateDate ("29 Sep 11:49") has no year component.
+  // ImageDate is "YYYYMMDD" — use it as the authoritative date source.
+  // CreateDate from the search listing reflects the last refresh/bump date,
+  // NOT the original creation date. Only the time component from CreateDate is reliable.
+  // Example: ImageDate="20260124", CreateDate="08 Aug 23:30" → "24 Jan 2026 23:30"
   let dateStr = item.CreateDate ?? '';
-  if (item.ImageDate && item.ImageDate.length >= 4) {
+  if (item.ImageDate && item.ImageDate.length >= 8) {
+    const year  = item.ImageDate.substring(0, 4);
+    const month = item.ImageDate.substring(4, 6);
+    const day   = item.ImageDate.substring(6, 8);
+    // Extract time from CreateDate if present ("DD Mon HH:MM" or "Денес HH:MM" etc.)
+    const timeMatch = dateStr.match(/(\d{2}:\d{2})$/);
+    const time = timeMatch ? timeMatch[1] : '';
+    // Build a DD.MM.YYYY [HH:MM] string that parseMkDate already handles
+    dateStr = time ? `${day}.${month}.${year} ${time}` : `${day}.${month}.${year}`;
+  } else if (item.ImageDate && item.ImageDate.length >= 4) {
+    // Fallback: only year is available — insert it into the CreateDate string
     const year = item.ImageDate.substring(0, 4);
-    // Insert year between month abbreviation and time: "29 Sep 11:49" → "29 Sep 2020 11:49"
     dateStr = dateStr.replace(/^(\d{1,2}\s+\w+)\s+(\d{2}:\d{2})$/, `$1 ${year} $2`);
   }
 
