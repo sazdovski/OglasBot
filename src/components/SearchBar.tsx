@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { DEBOUNCE_MS } from '../config/constants';
+import { useLanguage } from '../hooks/useLanguage';
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
@@ -13,6 +14,7 @@ interface SearchBarProps {
 export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated, currentPage }: SearchBarProps) {
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+  const { t } = useLanguage();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value;
@@ -39,7 +41,7 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
             type="text"
             value={value}
             onChange={handleChange}
-            placeholder="Search marketplace... (e.g. ipad, iphone, laptop)"
+            placeholder={t('search.placeholder')}
             className="w-full bg-[#161b22] border border-[#30363d] rounded-xl pl-11 pr-4 py-3.5 text-base text-gray-200
               placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30
               transition-all shadow-sm"
@@ -52,7 +54,7 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
             className="flex-1 sm:flex-none px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
               text-white font-semibold text-sm transition-colors shadow-sm whitespace-nowrap"
           >
-            Search
+            {t('search.button')}
           </button>
           {loading ? (
             <button
@@ -60,14 +62,14 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
               onClick={onCancel}
               className="flex-1 sm:flex-none px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors whitespace-nowrap"
             >
-              Cancel
+              {t('search.cancel')}
             </button>
           ) : lastUpdated ? (
             <button
               type="button"
               onClick={onRefresh}
               className="px-5 py-3.5 rounded-xl bg-[#21262d] hover:bg-[#30363d] text-gray-300 text-sm transition-colors"
-              title="Refresh results"
+              title={t('search.refreshTooltip')}
             >
               ↺
             </button>
@@ -87,14 +89,14 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
             ))}
           </div>
           <span className="text-gray-500 text-sm">
-            Fetching page {currentPage}...
+            {t('search.loading', { page: currentPage })}
           </span>
         </div>
       )}
 
       {lastUpdated && !loading && (
         <p className="text-gray-600 text-xs px-1">
-          Last updated: {lastUpdated.toLocaleTimeString()}
+          {t('search.lastUpdated', { time: lastUpdated.toLocaleTimeString() })}
         </p>
       )}
     </div>

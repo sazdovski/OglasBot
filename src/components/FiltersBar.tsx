@@ -1,18 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { DateFilter, DateRange } from '../types';
 import type { PriceStats } from '../utils/currency';
-
-const DATE_FILTERS: { key: DateFilter; label: string }[] = [
-  { key: 'all', label: 'All Time' },
-  { key: 'today', label: 'Today' },
-  { key: 'week', label: 'This Week' },
-  { key: 'month', label: 'This Month' },
-  { key: '30days', label: '30 Days' },
-  { key: '3months', label: '3 Months' },
-  { key: '6months', label: '6 Months' },
-  { key: '1year', label: '1 Year' },
-  { key: 'custom', label: 'Custom' },
-];
+import { useLanguage } from '../hooks/useLanguage';
 
 function Divider() {
   return <div className="w-px h-5 bg-[#21262d] shrink-0" />;
@@ -75,11 +64,24 @@ export function FiltersBar({
   onSelectedCategoriesChange,
   priceStats,
 }: FiltersBarProps) {
+  const { t } = useLanguage();
   const [showRateEditor, setShowRateEditor] = useState(false);
   const [rateInput, setRateInput] = useState(String(exchangeRate));
   const rateRef = useRef<HTMLInputElement>(null);
   const [catOpen, setCatOpen] = useState(false);
   const catRef = useRef<HTMLDivElement>(null);
+
+  const DATE_FILTERS: { key: DateFilter; labelKey: string }[] = [
+    { key: 'all',      labelKey: 'filters.allTime' },
+    { key: 'today',    labelKey: 'filters.today'   },
+    { key: 'week',     labelKey: 'filters.week'    },
+    { key: 'month',    labelKey: 'filters.month'   },
+    { key: '30days',   labelKey: 'filters.30days'  },
+    { key: '3months',  labelKey: 'filters.3months' },
+    { key: '6months',  labelKey: 'filters.6months' },
+    { key: '1year',    labelKey: 'filters.1year'   },
+    { key: 'custom',   labelKey: 'filters.custom'  },
+  ];
 
   useEffect(() => {
     if (showRateEditor) rateRef.current?.focus();
@@ -117,7 +119,7 @@ export function FiltersBar({
             </svg>
             <input
               type="text"
-              placeholder="Filter results..."
+              placeholder={t('filters.placeholder')}
               value={filter}
               onChange={e => onFilterChange(e.target.value)}
               className="flex-1 min-w-0 bg-transparent text-sm text-gray-200 placeholder-gray-600 focus:outline-none"
@@ -141,7 +143,7 @@ export function FiltersBar({
             </svg>
             <input
               type="text"
-              placeholder="Excludes..."
+              placeholder={t('filters.excludes')}
               value={excludeFilter}
               onChange={e => onExcludeFilterChange(e.target.value)}
               className="flex-1 min-w-0 bg-transparent text-sm placeholder-[rgba(239,68,68,0.4)] focus:outline-none"
@@ -195,7 +197,7 @@ export function FiltersBar({
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M4 6h16M4 12h8M4 18h4" />
                 </svg>
-                Category
+                {t('filters.category')}
                 {selectedCategories.length > 0 && (
                   <span className="bg-violet-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold leading-none">
                     {selectedCategories.length}
@@ -206,13 +208,13 @@ export function FiltersBar({
               {catOpen && (
                 <div className="absolute top-[calc(100%+8px)] left-0 z-50 bg-[#0d1117] border border-[#30363d] rounded-xl shadow-2xl shadow-black/50 w-60 max-h-72 overflow-y-auto">
                   <div className="px-4 py-2.5 border-b border-[#21262d] flex items-center justify-between">
-                    <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">Categories</span>
+                    <span className="text-[11px] text-gray-500 font-medium uppercase tracking-wider">{t('filters.categories')}</span>
                     {selectedCategories.length > 0 && (
                       <button
                         onClick={() => onSelectedCategoriesChange([])}
                         className="text-[11px] text-violet-400 hover:text-violet-300 transition-colors"
                       >
-                        Clear
+                        {t('filters.clear')}
                       </button>
                     )}
                   </div>
@@ -251,7 +253,7 @@ export function FiltersBar({
               ${hideNoPrice ? 'bg-emerald-600 border-emerald-600' : 'border-[#30363d]'}`}>
               {hideNoPrice && <CheckIcon />}
             </div>
-            No Price
+            {t('filters.noPrice')}
           </button>
           </div>
         </div>{/* end mobile row 2 */}
@@ -287,7 +289,7 @@ export function FiltersBar({
             <button
               onClick={() => { setRateInput(String(exchangeRate)); setShowRateEditor(true); }}
               className="text-xs text-gray-600 hover:text-gray-400 transition-colors whitespace-nowrap"
-              title="Click to edit exchange rate"
+              title={t('filters.exchangeRateTooltip')}
             >
               1€ = {exchangeRate} МКД
             </button>
@@ -301,8 +303,8 @@ export function FiltersBar({
               <div className="shrink-0 px-4 flex items-center h-full">
                 <span className="text-gray-600 text-xs whitespace-nowrap tabular-nums">
                   {filteredCount === totalCount
-                    ? `${totalCount} ads`
-                    : `${filteredCount} / ${totalCount} ads`}
+                    ? t('filters.adsCount', { count: totalCount })
+                    : t('filters.adsCountFiltered', { filtered: filteredCount, total: totalCount })}
                 </span>
               </div>
             </>
@@ -313,15 +315,15 @@ export function FiltersBar({
       {/* ── Row 1b: Price stats ─────────────────────────────────── */}
       {priceStats && (
         <div className="flex items-center gap-1 px-4 h-9 overflow-x-auto">
-          <span className="text-[11px] text-gray-600 uppercase tracking-wider font-medium shrink-0">Price stats (€):</span>
+          <span className="text-[11px] text-gray-600 uppercase tracking-wider font-medium shrink-0">{t('filters.priceStats')}</span>
           <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
           <span className="text-xs text-gray-500 shrink-0">P10 <span className="text-gray-300 font-medium tabular-nums">{priceStats.p10} €</span></span>
           <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
-          <span className="text-xs text-gray-500 shrink-0">Median <span className="text-white font-semibold tabular-nums">{priceStats.median} €</span></span>
+          <span className="text-xs text-gray-500 shrink-0">{t('filters.priceStatsMedian')} <span className="text-white font-semibold tabular-nums">{priceStats.median} €</span></span>
           <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
           <span className="text-xs text-gray-500 shrink-0">P90 <span className="text-gray-300 font-medium tabular-nums">{priceStats.p90} €</span></span>
           <span className="mx-2 w-px h-4 bg-[#21262d] shrink-0" />
-          <span className="text-xs text-gray-500 shrink-0">Avg <span className="text-gray-300 font-medium tabular-nums">{priceStats.trimmedMean} €</span></span>
+          <span className="text-xs text-gray-500 shrink-0">{t('filters.priceStatsAvg')} <span className="text-gray-300 font-medium tabular-nums">{priceStats.trimmedMean} €</span></span>
         </div>
       )}
 
@@ -336,7 +338,7 @@ export function FiltersBar({
                 ? 'bg-[#21262d] text-white'
                 : 'text-gray-600 hover:text-gray-400'}`}
           >
-            {df.label}
+            {t(df.labelKey)}
           </button>
         ))}
         {dateFilter === 'custom' && (

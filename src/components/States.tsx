@@ -1,4 +1,4 @@
-
+import { useLanguage } from '../hooks/useLanguage';
 
 export function SkeletonRow() {
   return (
@@ -13,12 +13,13 @@ export function SkeletonRow() {
 }
 
 export function SkeletonTable({ rows = 10 }: { rows?: number }) {
+  const { t } = useLanguage();
   return (
     <div className="overflow-auto rounded-xl border border-[#30363d]">
       <table className="w-full text-sm">
         <thead>
           <tr className="bg-[#161b22] border-b border-[#30363d]">
-            {['Title', 'Price (МКД)', 'Price (€)', 'Date', 'City', 'Actions'].map(h => (
+            {[t('table.title'), t('table.priceMKD'), t('table.priceEUR'), t('table.date'), t('table.city'), 'Actions'].map(h => (
               <th key={h} className="px-4 py-3 text-gray-500 font-semibold text-left">{h}</th>
             ))}
           </tr>
@@ -34,45 +35,60 @@ export function SkeletonTable({ rows = 10 }: { rows?: number }) {
 }
 
 export function EmptyState({ keyword }: { keyword: string }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="text-5xl mb-4">🔍</div>
-      <p className="text-gray-300 text-lg font-semibold mb-2">No results found</p>
+      <p className="text-gray-300 text-lg font-semibold mb-2">{t('states.noResults')}</p>
       <p className="text-gray-500 text-sm">
-        No advertisements found for <span className="text-gray-300">"{keyword}"</span>
+        {t('states.noResultsDesc', { keyword })}
       </p>
     </div>
   );
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="text-5xl mb-4">⚠️</div>
-      <p className="text-red-400 text-lg font-semibold mb-2">Something went wrong</p>
+      <p className="text-red-400 text-lg font-semibold mb-2">{t('states.errorTitle')}</p>
       <p className="text-gray-500 text-sm mb-4">{message}</p>
       <button
         onClick={onRetry}
         className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm transition-colors"
       >
-        Try Again
+        {t('states.tryAgain')}
       </button>
     </div>
   );
 }
 
 export function WelcomeState() {
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center px-4">
       <div className="text-6xl mb-5">🤖</div>
-      <h1 className="text-gray-100 text-3xl sm:text-4xl font-bold mb-3 tracking-tight">OglasBot</h1>
+      <h1 className="text-gray-100 text-3xl sm:text-4xl font-bold mb-3 tracking-tight">{t('states.welcomeTitle')}</h1>
       <p className="text-gray-400 text-base sm:text-lg mb-2 max-w-md">
-        Search across <span className="text-orange-400 font-medium">reklama5.mk</span> and <span className="text-blue-400 font-medium">pazar3.mk</span> simultaneously.
+        {t('states.welcomeDesc').split('reklama5.mk').map((part, _i, arr) =>
+          _i < arr.length - 1
+            ? [part, <span key={_i} className="text-orange-400 font-medium">reklama5.mk</span>]
+            : part
+        ).flat().map((node, _i) =>
+          typeof node === 'string'
+            ? node.split('pazar3.mk').map((p, j, a) =>
+                j < a.length - 1
+                  ? [p, <span key={`p${j}`} className="text-blue-400 font-medium">pazar3.mk</span>]
+                  : p
+              ).flat()
+            : node
+        ).flat()}
       </p>
       <p className="text-gray-600 text-sm max-w-sm">
-        Find any listing — compare prices, filter by date, city, or category, all in one place.
+        {t('states.welcomeSub')}
       </p>
-      <p className="mt-8 text-gray-600 text-sm">↑ Enter a keyword above to get started</p>
+      <p className="mt-8 text-gray-600 text-sm">{t('states.welcomePrompt')}</p>
     </div>
   );
 }

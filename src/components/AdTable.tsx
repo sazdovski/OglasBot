@@ -1,22 +1,13 @@
 import React from 'react';
 import type { Ad, SortState } from '../types';
 import { formatMKD, formatEUR } from '../utils/currency';
-import { format, isValid } from 'date-fns';
-
-function safeFormat(date: Date, fmt: string, fallback: string): string {
-  try {
-    if (!date || !isValid(date) || isNaN(date.getTime())) return fallback;
-    return format(date, fmt);
-  } catch {
-    return fallback;
-  }
-}
+import { useLanguage, formatAdDate } from '../hooks/useLanguage';
 
 interface Column {
   key: keyof Ad;
   label: string;
   sortable: boolean;
-  render: (ad: Ad) => React.ReactNode;
+  render: (ad: Ad, t: (key: string) => string, lang: string) => React.ReactNode;
   minWidth: string;
 }
 
@@ -26,10 +17,9 @@ interface AdTableProps {
   onSort: (col: keyof Ad) => void;
 }
 
-const COLUMNS: Column[] = [
+const COLUMN_DEFS: Omit<Column, 'label'>[] = [
   {
     key: 'title',
-    label: 'Title',
     sortable: true,
     minWidth: '250px',
     render: (ad) => (
@@ -57,40 +47,36 @@ const COLUMNS: Column[] = [
   },
   {
     key: 'priceMKD',
-    label: 'Price (МКД)',
     sortable: true,
     minWidth: '120px',
-    render: (ad) => (
+    render: (ad, t) => (
       <span className={ad.priceMKD ? 'text-emerald-400 font-semibold' : 'text-gray-500 text-sm'}>
-        {formatMKD(ad.priceMKD)}
+        {formatMKD(ad.priceMKD, t('table.noPrice'))}
       </span>
     ),
   },
   {
     key: 'priceEUR',
-    label: 'Price (€)',
     sortable: true,
     minWidth: '100px',
-    render: (ad) => (
+    render: (ad, t) => (
       <span className={ad.priceEUR ? 'text-blue-400 font-semibold' : 'text-gray-500 text-sm'}>
-        {formatEUR(ad.priceEUR)}
+        {formatEUR(ad.priceEUR, t('table.noPrice'))}
       </span>
     ),
   },
   {
     key: 'date',
-    label: 'Date',
     sortable: true,
     minWidth: '130px',
-    render: (ad) => (
+    render: (ad, _t, lang) => (
       <span className="text-gray-400 text-sm whitespace-nowrap">
-        {safeFormat(ad.date, 'dd MMM yyyy HH:mm', ad.dateFormatted)}
+        {formatAdDate(ad.date, true, lang as 'mk' | 'en', ad.dateFormatted)}
       </span>
     ),
   },
   {
     key: 'category',
-    label: 'Category',
     sortable: true,
     minWidth: '130px',
     render: (ad) => (
@@ -101,7 +87,6 @@ const COLUMNS: Column[] = [
   },
   {
     key: 'city',
-    label: 'City',
     sortable: true,
     minWidth: '140px',
     render: (ad) => (
@@ -110,7 +95,6 @@ const COLUMNS: Column[] = [
   },
   {
     key: 'source',
-    label: 'Source',
     sortable: false,
     minWidth: '100px',
     render: (ad) => (
@@ -125,6 +109,16 @@ const COLUMNS: Column[] = [
   },
 ];
 
+const LABEL_KEYS: Record<string, string> = {
+  title: 'table.title',
+  priceMKD: 'table.priceMKD',
+  priceEUR: 'table.priceEUR',
+  date: 'table.date',
+  category: 'table.category',
+  city: 'table.city',
+  source: 'table.source',
+};
+
 function SortIcon({ column, sort }: { column: keyof Ad; sort: SortState }) {
   if (sort.column !== column) {
     return <span className="text-gray-600 ml-1">↕</span>;
@@ -137,12 +131,14 @@ function SortIcon({ column, sort }: { column: keyof Ad; sort: SortState }) {
 }
 
 export function AdTable({ ads, sort, onSort }: AdTableProps) {
+  const { t, language } = useLanguage();
+
   return (
     <div className="overflow-auto rounded-xl border border-[#30363d] shadow-lg">
       <table className="w-full text-sm text-left border-collapse">
         <thead>
           <tr className="bg-[#161b22] border-b border-[#30363d]">
-            {COLUMNS.map((col) => (
+            {COLUMN_DEFS.map((col) => (
               <th
                 key={col.key}
                 onClick={() => col.sortable && onSort(col.key)}
@@ -151,7 +147,7 @@ export function AdTable({ ads, sort, onSort }: AdTableProps) {
                 `}
                 style={{ minWidth: col.minWidth }}
               >
-                {col.label}
+                {t(LABEL_KEYS[col.key] || col.key)}
                 {col.sortable && <SortIcon column={col.key} sort={sort} />}
               </th>
             ))}
@@ -168,16 +164,16 @@ export function AdTable({ ads, sort, onSort }: AdTableProps) {
                 ${i % 2 === 0 ? 'bg-[#0d1117]' : 'bg-[#0f141a]'}
               `}
             >
-              {COLUMNS.map((col) => (
+              {COLUMN_DEFS.map((col) => (
                 <td key={col.key} className="px-4 py-3">
-                  {col.render(ad)}
+                  {col.render(ad, t, language)}
                 </td>
               ))}
               <td className="px-4 py-3">
                 <button
                   onClick={() => navigator.clipboard.writeText(ad.url)}
                   className="p-1.5 rounded bg-[#21262d] hover:bg-[#30363d] text-gray-400 hover:text-white transition-colors"
-                  title="Copy URL"
+                  title={t('table.copyUrl')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>

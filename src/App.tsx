@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSearch } from './hooks/useSearch';
 import { useAdFilters } from './hooks/useAdFilters';
+import { useLanguage } from './hooks/useLanguage';
 import { SearchBar } from './components/SearchBar';
 import { FiltersBar } from './components/FiltersBar';
 import { AdTable } from './components/AdTable';
@@ -17,6 +18,8 @@ export default function App() {
   const [exchangeRate, setRate] = useState(getExchangeRate());
   const [searchKey, setSearchKey] = useState(0);
   const [viewMode, setViewMode] = useState<'table' | 'tiles'>('table');
+
+  const { language, setLanguage, t } = useLanguage();
 
   const { ads, loading, error, totalCount, lastUpdated, currentPage, search, refresh, cancelSearch, reset } = useSearch();
 
@@ -75,18 +78,49 @@ export default function App() {
           <button
             onClick={handleReset}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            title="Back to home"
+            title={t('header.backToHome')}
           >
             <span className="text-2xl">🤖</span>
             <span className="font-bold text-lg tracking-tight">OglasBot</span>
           </button>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <span className="text-[10px] sm:text-[11px] bg-orange-900/50 text-orange-400 border border-orange-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
-              reklama5.mk
-            </span>
-            <span className="text-[10px] sm:text-[11px] bg-blue-900/50 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
-              pazar3.mk
-            </span>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Source badges */}
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] sm:text-[11px] bg-orange-900/50 text-orange-400 border border-orange-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
+                reklama5.mk
+              </span>
+              <span className="text-[10px] sm:text-[11px] bg-blue-900/50 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
+                pazar3.mk
+              </span>
+            </div>
+
+            {/* Language switcher */}
+            <div className="flex items-center rounded-lg border border-[#30363d] bg-[#161b22] overflow-hidden">
+              <button
+                onClick={() => setLanguage('mk')}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  language === 'mk'
+                    ? 'bg-[#30363d] text-white'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+                title="Македонски"
+              >
+                МК
+              </button>
+              <div className="w-px h-3.5 bg-[#30363d]" />
+              <button
+                onClick={() => setLanguage('en')}
+                className={`px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  language === 'en'
+                    ? 'bg-[#30363d] text-white'
+                    : 'text-gray-500 hover:text-gray-300'
+                }`}
+                title="English"
+              >
+                EN
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -140,7 +174,7 @@ export default function App() {
             <div className="flex items-center justify-end gap-1">
               <button
                 onClick={() => setViewMode('table')}
-                title="Table view"
+                title={t('view.tableView')}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'table'
                     ? 'bg-[#30363d] text-white'
@@ -157,7 +191,7 @@ export default function App() {
               </button>
               <button
                 onClick={() => setViewMode('tiles')}
-                title="Tiles view"
+                title={t('view.tilesView')}
                 className={`p-2 rounded-lg transition-colors ${
                   viewMode === 'tiles'
                     ? 'bg-[#30363d] text-white'
@@ -188,15 +222,17 @@ export default function App() {
                     disabled={page === 1}
                     className="px-4 py-2 rounded-lg bg-[#21262d] hover:bg-[#30363d] disabled:opacity-40 disabled:cursor-not-allowed text-sm text-gray-300 transition-colors"
                   >
-                    ← Prev
+                    {t('pagination.prev')}
                   </button>
-                  <span className="text-gray-500 text-sm">Page {page} of {totalPages}</span>
+                  <span className="text-gray-500 text-sm">
+                    {t('pagination.page', { page, totalPages })}
+                  </span>
                   <button
                     onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                     disabled={page === totalPages}
                     className="px-4 py-2 rounded-lg bg-[#21262d] hover:bg-[#30363d] disabled:opacity-40 disabled:cursor-not-allowed text-sm text-gray-300 transition-colors"
                   >
-                    Next →
+                    {t('pagination.next')}
                   </button>
                 </>
               )}
@@ -206,7 +242,7 @@ export default function App() {
                 className="bg-[#21262d] border border-[#30363d] rounded-lg px-2 py-1.5 text-sm text-gray-300 focus:outline-none"
               >
                 {[10, 30, 50, 100].map(n => (
-                  <option key={n} value={n}>{n} / page</option>
+                  <option key={n} value={n}>{t('pagination.perPage', { count: n })}</option>
                 ))}
               </select>
             </div>
@@ -215,7 +251,7 @@ export default function App() {
 
         {loading && ads.length > 0 && (
           <div className="text-center text-gray-500 text-sm">
-            Loaded {ads.length} ads so far, fetching more...
+            {t('view.loadedAds', { count: ads.length })}
           </div>
         )}
       </main>

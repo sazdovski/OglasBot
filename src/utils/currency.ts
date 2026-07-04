@@ -54,12 +54,13 @@ export function computePriceStats(ads: Ad[]): PriceStats | null {
   return { median: p50, p10, p90, trimmedMean, count: prices.length };
 }
 
-export function formatMKD(value: number | null): string {
-  if (value === null || value === 0) return 'No Price';
+export function formatMKD(value: number | null, noPriceLabel: string = 'No Price'): string {
+  if (value === null || value === 0) return noPriceLabel;
   return `${value.toLocaleString('mk-MK')} МКД`;
 }
 
-export function formatEUR(value: number | null): string {
-  if (value === null || value === 0) return 'No Price';
+export function formatEUR(value: number | null, noPriceLabel: string = 'No Price'): string {
+  if (value === null || value === 0) return noPriceLabel;
   return `${Math.round(value).toLocaleString('de-DE')} €`;
 }
+

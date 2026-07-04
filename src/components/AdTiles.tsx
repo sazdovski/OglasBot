@@ -1,16 +1,7 @@
 import { useState } from 'react';
 import type { Ad } from '../types';
 import { formatMKD, formatEUR } from '../utils/currency';
-import { format, isValid } from 'date-fns';
-
-function safeFormat(date: Date, fmt: string, fallback: string): string {
-  try {
-    if (!date || !isValid(date) || isNaN(date.getTime())) return fallback;
-    return format(date, fmt);
-  } catch {
-    return fallback;
-  }
-}
+import { useLanguage, formatAdDate } from '../hooks/useLanguage';
 
 interface AdTilesProps {
   ads: Ad[];
@@ -18,6 +9,7 @@ interface AdTilesProps {
 
 function AdTile({ ad }: { ad: Ad }) {
   const [imgError, setImgError] = useState(false);
+  const { t, language } = useLanguage();
 
   return (
     <a
@@ -62,23 +54,23 @@ function AdTile({ ad }: { ad: Ad }) {
             <>
               {ad.priceMKD && (
                 <span className="text-emerald-400 font-semibold text-sm">
-                  {formatMKD(ad.priceMKD)}
+                  {formatMKD(ad.priceMKD, t('table.noPrice'))}
                 </span>
               )}
               {ad.priceEUR && (
                 <span className="text-blue-400 font-semibold text-sm">
-                  {formatEUR(ad.priceEUR)}
+                  {formatEUR(ad.priceEUR, t('table.noPrice'))}
                 </span>
               )}
             </>
           ) : (
-            <span className="text-gray-500 text-xs">No price</span>
+            <span className="text-gray-500 text-xs">{t('table.noPrice')}</span>
           )}
         </div>
 
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span>{ad.city || '—'}</span>
-          <span>{safeFormat(ad.date, 'dd MMM yyyy', ad.dateFormatted)}</span>
+          <span>{formatAdDate(ad.date, false, language, ad.dateFormatted)}</span>
         </div>
 
         {ad.category && (
