@@ -33,7 +33,7 @@ function AdTile({ ad }: { ad: Ad }) {
         )}
         {/* Source badge */}
         <span
-          className={`absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-medium ${
+          className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-medium ${
             ad.source === 'reklama5'
               ? 'bg-orange-900/90 text-orange-300'
               : 'bg-blue-900/90 text-blue-300'

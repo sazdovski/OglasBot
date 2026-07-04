@@ -98,7 +98,7 @@ const COLUMN_DEFS: Omit<Column, 'label'>[] = [
     sortable: false,
     minWidth: '100px',
     render: (ad) => (
-      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
         ad.source === 'reklama5'
           ? 'bg-orange-900 text-orange-300'
           : 'bg-blue-900 text-blue-300'

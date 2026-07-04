@@ -102,13 +102,13 @@ export function parsePrice(raw: string): { value: number | null; currency: 'MKD'
   if (eurMatch) {
     // Macedonian locale uses '.' as thousands separator (e.g. "37.000" = 37000)
     const value = parseFloat(eurMatch[1].replace(/\s/g, '').replace(/\./g, '').replace(',', '.'));
-    return { value: isNaN(value) || value === 0 ? null : value, currency: 'EUR' };
+    return { value: isNaN(value) || value <= 1 ? null : value, currency: 'EUR' };
   }
 
   const mkdMatch = cleaned.match(/([\d\s.,]+)\s*МКД/);
   if (mkdMatch) {
     const value = parseInt(mkdMatch[1].replace(/[\s.]/g, ''), 10);
-    return { value: isNaN(value) || value === 0 ? null : value, currency: 'MKD' };
+    return { value: isNaN(value) || value <= 1 ? null : value, currency: 'MKD' };
   }
 
   return { value: null, currency: null };
