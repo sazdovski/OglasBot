@@ -21,7 +21,7 @@ export default function App() {
 
   const { language, setLanguage, t } = useLanguage();
 
-  const { ads, loading, error, totalCount, lastUpdated, currentPage, search, refresh, cancelSearch, reset } = useSearch();
+  const { ads, loading, error, totalCount, lastUpdated, sourceProgress, search, refresh, cancelSearch, reset } = useSearch();
 
   const {
     filter, setFilter,
@@ -33,6 +33,7 @@ export default function App() {
     hideNoPrice, setHideNoPrice,
     showReklama5, setShowReklama5,
     showPazar3, setShowPazar3,
+    showItmk, setShowItmk,
     selectedCategories, setSelectedCategories,
     availableCategories,
   } = useAdFilters(ads);
@@ -93,6 +94,9 @@ export default function App() {
               <span className="text-[10px] sm:text-[11px] bg-blue-900/50 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
                 pazar3.mk
               </span>
+              <span className="text-[10px] sm:text-[11px] bg-emerald-900/50 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded-full font-medium whitespace-nowrap">
+                it.mk
+              </span>
             </div>
 
             {/* Language switcher */}
@@ -133,7 +137,7 @@ export default function App() {
           onCancel={cancelSearch}
           loading={loading}
           lastUpdated={lastUpdated}
-          currentPage={currentPage}
+          sourceProgress={sourceProgress}
         />
 
         {(showTable || showSkeleton) && (
@@ -156,6 +160,8 @@ export default function App() {
             onShowReklama5Change={(v) => { setShowReklama5(v); setPage(1); }}
             showPazar3={showPazar3}
             onShowPazar3Change={(v) => { setShowPazar3(v); setPage(1); }}
+            showItmk={showItmk}
+            onShowItmkChange={(v) => { setShowItmk(v); setPage(1); }}
             availableCategories={availableCategories}
             selectedCategories={selectedCategories}
             onSelectedCategoriesChange={(cats) => { setSelectedCategories(cats); setPage(1); }}

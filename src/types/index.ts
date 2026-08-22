@@ -1,4 +1,4 @@
-export type AdSource = 'reklama5' | 'pazar3';
+export type AdSource = 'reklama5' | 'pazar3' | 'itmk';
 
 export interface RawAd {
   adId: number;

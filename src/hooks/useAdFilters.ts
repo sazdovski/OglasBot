@@ -11,6 +11,7 @@ export function useAdFilters(ads: Ad[]) {
   const [hideNoPrice, setHideNoPrice] = useState(false);
   const [showReklama5, setShowReklama5] = useState(true);
   const [showPazar3, setShowPazar3] = useState(true);
+  const [showItmk, setShowItmk] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
   const handleSort = useCallback((column: keyof Ad) => {
@@ -35,6 +36,7 @@ export function useAdFilters(ads: Ad[]) {
     // Source filter
     if (!showReklama5) result = result.filter(a => a.source !== 'reklama5');
     if (!showPazar3) result = result.filter(a => a.source !== 'pazar3');
+    if (!showItmk) result = result.filter(a => a.source !== 'itmk');
 
     // Category filter
     if (selectedCategories.length > 0) {
@@ -127,7 +129,7 @@ export function useAdFilters(ads: Ad[]) {
     }
 
     return result;
-  }, [ads, filter, excludeFilter, dateFilter, dateRange, sort, hideNoPrice, showReklama5, showPazar3, selectedCategories]);
+  }, [ads, filter, excludeFilter, dateFilter, dateRange, sort, hideNoPrice, showReklama5, showPazar3, showItmk, selectedCategories]);
 
   return {
     filter,
@@ -147,6 +149,8 @@ export function useAdFilters(ads: Ad[]) {
     setShowReklama5,
     showPazar3,
     setShowPazar3,
+    showItmk,
+    setShowItmk,
     selectedCategories,
     setSelectedCategories,
     availableCategories,

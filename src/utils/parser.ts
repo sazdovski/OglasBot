@@ -14,6 +14,12 @@ export function parseMkDate(dateStr: string): Date {
   const trimmed = dateStr.trim();
   if (!trimmed) return new Date(0);
 
+  // IT.mk exposes an ISO 8601 datetime on each listing.
+  if (/^\d{4}-\d{2}-\d{2}T/.test(trimmed)) {
+    const parsed = new Date(trimmed);
+    return isNaN(parsed.getTime()) ? new Date(0) : parsed;
+  }
+
   const parts = trimmed.split(' ').filter(Boolean);
   if (parts.length === 0) return new Date(0);
 
@@ -97,21 +103,32 @@ export function parsePrice(raw: string): { value: number | null; currency: 'MKD'
   if (!raw || raw.trim() === '') return { value: null, currency: null };
 
   const cleaned = raw.trim();
+  const matches = Array.from(cleaned.matchAll(/([\d\s.,]+)\s*(€|МКД)/g));
 
-  const eurMatch = cleaned.match(/([\d\s.,]+)\s*€/);
-  if (eurMatch) {
-    // Macedonian locale uses '.' as thousands separator (e.g. "37.000" = 37000)
-    const value = parseFloat(eurMatch[1].replace(/\s/g, '').replace(/\./g, '').replace(',', '.'));
-    return { value: isNaN(value) || value <= 1 ? null : value, currency: 'EUR' };
+  if (matches.length === 0) return { value: null, currency: null };
+
+  const parsedValues: Array<{ value: number | null; currency: 'MKD' | 'EUR' | null }> = matches.map((match) => {
+    const amount = match[1];
+    const currencyToken = match[2];
+    const currency: 'MKD' | 'EUR' = currencyToken === '€' ? 'EUR' : 'MKD';
+
+    const parsed = currency === 'EUR'
+      ? parseFloat(amount.replace(/\s/g, '').replace(/\./g, '').replace(',', '.'))
+      : parseInt(amount.replace(/[\s.]/g, ''), 10);
+
+    return {
+      value: isNaN(parsed) || parsed <= 1 ? null : parsed,
+      currency,
+    };
+  });
+
+  const hasPlaceholder = parsedValues.some((entry) => entry.value === null);
+  if (hasPlaceholder) {
+    return { value: null, currency: null };
   }
 
-  const mkdMatch = cleaned.match(/([\d\s.,]+)\s*МКД/);
-  if (mkdMatch) {
-    const value = parseInt(mkdMatch[1].replace(/[\s.]/g, ''), 10);
-    return { value: isNaN(value) || value <= 1 ? null : value, currency: 'MKD' };
-  }
-
-  return { value: null, currency: null };
+  const firstMeaningful = parsedValues.find((entry) => entry.value !== null);
+  return firstMeaningful ? firstMeaningful : { value: null, currency: null };
 }
 
 export function normalizeAd(raw: RawAd): Ad {

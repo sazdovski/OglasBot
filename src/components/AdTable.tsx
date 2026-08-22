@@ -101,9 +101,11 @@ const COLUMN_DEFS: Omit<Column, 'label'>[] = [
       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
         ad.source === 'reklama5'
           ? 'bg-orange-900 text-orange-300'
-          : 'bg-blue-900 text-blue-300'
+          : ad.source === 'pazar3'
+            ? 'bg-blue-900 text-blue-300'
+            : 'bg-emerald-900 text-emerald-300'
       }`}>
-        {ad.source === 'reklama5' ? 'Reklama5' : 'Pazar3'}
+        {ad.source === 'reklama5' ? 'Reklama5' : ad.source === 'pazar3' ? 'Pazar3' : 'IT.mk'}
       </span>
     ),
   },
@@ -159,7 +161,7 @@ export function AdTable({ ads, sort, onSort }: AdTableProps) {
         <tbody>
           {ads.map((ad, i) => (
             <tr
-              key={ad.id}
+              key={`${ad.source}-${ad.id}`}
               className={`border-b border-[#21262d] transition-colors hover:bg-[#161b22]
                 ${i % 2 === 0 ? 'bg-[#0d1117]' : 'bg-[#0f141a]'}
               `}

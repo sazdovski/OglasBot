@@ -36,10 +36,12 @@ function AdTile({ ad }: { ad: Ad }) {
           className={`absolute top-2 right-2 px-2 py-0.5 rounded-full text-xs font-medium ${
             ad.source === 'reklama5'
               ? 'bg-orange-900/90 text-orange-300'
-              : 'bg-blue-900/90 text-blue-300'
+              : ad.source === 'pazar3'
+                ? 'bg-blue-900/90 text-blue-300'
+                : 'bg-emerald-900/90 text-emerald-300'
           }`}
         >
-          {ad.source === 'reklama5' ? 'Reklama5' : 'Pazar3'}
+          {ad.source === 'reklama5' ? 'Reklama5' : ad.source === 'pazar3' ? 'Pazar3' : 'IT.mk'}
         </span>
       </div>
 
@@ -87,7 +89,7 @@ export function AdTiles({ ads }: AdTilesProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {ads.map((ad) => (
-        <AdTile key={ad.id} ad={ad} />
+        <AdTile key={`${ad.source}-${ad.id}`} ad={ad} />
       ))}
     </div>
   );

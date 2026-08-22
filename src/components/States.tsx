@@ -75,12 +75,20 @@ export function WelcomeState() {
           _i < arr.length - 1
             ? [part, <span key={_i} className="text-orange-400 font-medium">reklama5.mk</span>]
             : part
-        ).flat().map((node, _i) =>
+        ).flat().map((node) =>
           typeof node === 'string'
             ? node.split('pazar3.mk').map((p, j, a) =>
                 j < a.length - 1
                   ? [p, <span key={`p${j}`} className="text-blue-400 font-medium">pazar3.mk</span>]
                   : p
+              ).flat()
+            : node
+        ).flat().map((node, i) =>
+          typeof node === 'string'
+            ? node.split('IT.mk').map((part, j, parts) =>
+                j < parts.length - 1
+                  ? [part, <span key={`itmk-${i}-${j}`} className="text-emerald-400 font-medium">IT.mk</span>]
+                  : part
               ).flat()
             : node
         ).flat()}

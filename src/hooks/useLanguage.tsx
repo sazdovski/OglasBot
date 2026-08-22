@@ -21,6 +21,7 @@ const translations: Record<Language, Record<string, string>> = {
     'search.cancel': 'Откажи',
     'search.refreshTooltip': 'Освежи ги резултатите',
     'search.loading': 'Процесирање',
+    'search.adsFound': 'пронајдени {count} огласи',
     'search.lastUpdated': 'Последно ажурирано во: {time}',
     
     // FiltersBar
@@ -52,7 +53,7 @@ const translations: Record<Language, Record<string, string>> = {
     'states.errorTitle': 'Нешто тргна наопаку',
     'states.tryAgain': 'Обиди се повторно',
     'states.welcomeTitle': 'OglasBot',
-    'states.welcomeDesc': 'Пребарувајте на reklama5.mk и pazar3.mk истовремено.',
+    'states.welcomeDesc': 'Пребарувајте на reklama5.mk, pazar3.mk и IT.mk истовремено.',
     'states.welcomeSub': 'Најдете кој било оглас — споредете цени, филтрирајте по датум, град или категорија, сè на едно место.',
     'states.welcomePrompt': '↑ Внесете клучен збор погоре за да започнете',
     
@@ -88,6 +89,7 @@ const translations: Record<Language, Record<string, string>> = {
     'search.cancel': 'Cancel',
     'search.refreshTooltip': 'Refresh results',
     'search.loading': 'Loading',
+    'search.adsFound': '{count} ads found',
     'search.lastUpdated': 'Last updated: {time}',
     
     // FiltersBar
@@ -119,7 +121,7 @@ const translations: Record<Language, Record<string, string>> = {
     'states.errorTitle': 'Something went wrong',
     'states.tryAgain': 'Try Again',
     'states.welcomeTitle': 'OglasBot',
-    'states.welcomeDesc': 'Search across reklama5.mk and pazar3.mk simultaneously.',
+    'states.welcomeDesc': 'Search across reklama5.mk, pazar3.mk, and IT.mk simultaneously.',
     'states.welcomeSub': 'Find any listing — compare prices, filter by date, city, or category, all in one place.',
     'states.welcomePrompt': '↑ Enter a keyword above to get started',
     

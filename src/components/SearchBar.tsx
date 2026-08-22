@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { DEBOUNCE_MS } from '../config/constants';
 import { useLanguage } from '../hooks/useLanguage';
+import type { SourceProgressMap } from '../services/searchService';
 
 interface SearchBarProps {
   onSearch: (keyword: string) => void;
@@ -8,10 +9,10 @@ interface SearchBarProps {
   onCancel: () => void;
   loading: boolean;
   lastUpdated: Date | null;
-  currentPage: number;
+  sourceProgress: SourceProgressMap;
 }
 
-export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated, currentPage }: SearchBarProps) {
+export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated, sourceProgress }: SearchBarProps) {
   const [value, setValue] = useState('');
   const [timer, setTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
   const { t } = useLanguage();
@@ -77,20 +78,30 @@ export function SearchBar({ onSearch, onRefresh, onCancel, loading, lastUpdated,
         </div>
       </form>
 
-      {loading && (
-        <div className="flex items-center gap-3 px-1">
-          <div className="flex gap-1">
-            {[0, 1, 2].map(i => (
-              <div
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-blue-500"
-                style={{ animation: `pulse-loading 1.2s ease-in-out ${i * 0.2}s infinite` }}
-              />
-            ))}
-          </div>
-          <span className="text-gray-500 text-sm">
-            {t('search.loading', { page: currentPage })}
-          </span>
+      {(loading || lastUpdated) && (
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 px-1">
+          {([
+            ['reklama5', 'Reklama5'],
+            ['pazar3', 'Pazar3'],
+            ['itmk', 'IT.mk'],
+          ] as const).map(([source, label]) => {
+            const progress = sourceProgress[source];
+            return (
+              <div key={source} className="flex items-center gap-2 text-sm">
+                {progress.status === 'loading' ? (
+                  <span className="w-3.5 h-3.5 rounded-full border-2 border-gray-700 border-t-blue-400 animate-spin" />
+                ) : progress.status === 'done' ? (
+                  <span className="text-emerald-400 font-bold">✓</span>
+                ) : (
+                  <span className="text-red-400 font-bold">!</span>
+                )}
+                <span className="text-gray-400">
+                  <span className="font-medium text-gray-300">{label}:</span>{' '}
+                  {t('search.adsFound', { count: progress.count })}
+                </span>
+              </div>
+            );
+          })}
         </div>
       )}
 

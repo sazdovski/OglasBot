@@ -1,6 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
 import type { Ad } from '../types';
 import { fetchAds } from '../services/searchService';
+import type { SourceProgressMap } from '../services/searchService';
+
+const INITIAL_SOURCE_PROGRESS: SourceProgressMap = {
+  reklama5: { count: 0, status: 'loading' },
+  pazar3: { count: 0, status: 'loading' },
+  itmk: { count: 0, status: 'loading' },
+};
 
 interface UseSearchReturn {
   ads: Ad[];
@@ -9,6 +16,7 @@ interface UseSearchReturn {
   totalCount: number;
   lastUpdated: Date | null;
   currentPage: number;
+  sourceProgress: SourceProgressMap;
   search: (keyword: string) => void;
   refresh: () => void;
   cancelSearch: () => void;
@@ -22,6 +30,7 @@ export function useSearch(): UseSearchReturn {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [lastKeyword, setLastKeyword] = useState('');
+  const [sourceProgress, setSourceProgress] = useState<SourceProgressMap>(INITIAL_SOURCE_PROGRESS);
 
   const abortRef = useRef<AbortController | null>(null);
 
@@ -36,6 +45,11 @@ export function useSearch(): UseSearchReturn {
     setError(null);
     setLoading(true);
     setCurrentPage(0);
+    setSourceProgress({
+      reklama5: { count: 0, status: 'loading' },
+      pazar3: { count: 0, status: 'loading' },
+      itmk: { count: 0, status: 'loading' },
+    });
     setLastKeyword(keyword);
 
     try {
@@ -45,7 +59,10 @@ export function useSearch(): UseSearchReturn {
           setAds([...partial]);
           setCurrentPage(page);
         },
-        controller.signal
+        controller.signal,
+        (source, progress) => {
+          setSourceProgress(previous => ({ ...previous, [source]: progress }));
+        }
       );
       setLastUpdated(new Date());
     } catch (err) {
@@ -82,6 +99,7 @@ export function useSearch(): UseSearchReturn {
     totalCount: ads.length,
     lastUpdated,
     currentPage,
+    sourceProgress,
     search: runSearch,
     refresh,
     cancelSearch,

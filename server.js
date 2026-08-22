@@ -67,6 +67,24 @@ app.get('/api/pazar3', async (req, res) => {
   }
 });
 
+// Proxy: /api/itmk -> public IT.mk marketplace category HTML
+app.get('/api/itmk', async (req, res) => {
+  const page = Math.max(1, Number.parseInt(String(req.query.page ?? '1'), 10) || 1);
+  const target = `https://forum.it.mk/oglasnik/categories/prodavam.1/${page > 1 ? `?page=${page}` : ''}`;
+  try {
+    const upstream = await fetch(target, {
+      headers: {
+        ...BROWSER_HEADERS,
+        Referer: 'https://forum.it.mk/oglasnik/categories/prodavam.1/',
+      },
+    });
+    if (!upstream.ok) return res.status(upstream.status).send(`Upstream error: ${upstream.status}`);
+    res.type('html').send(await upstream.text());
+  } catch (err) {
+    res.status(502).send(String(err));
+  }
+});
+
 // Serve static files from dist/
 app.use(express.static(path.join(__dirname, 'dist')));
 

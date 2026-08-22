@@ -34,6 +34,8 @@ interface FiltersBarProps {
   onShowReklama5Change: (v: boolean) => void;
   showPazar3: boolean;
   onShowPazar3Change: (v: boolean) => void;
+  showItmk: boolean;
+  onShowItmkChange: (v: boolean) => void;
   availableCategories: string[];
   selectedCategories: string[];
   onSelectedCategoriesChange: (cats: string[]) => void;
@@ -59,6 +61,8 @@ export function FiltersBar({
   onShowReklama5Change,
   showPazar3,
   onShowPazar3Change,
+  showItmk,
+  onShowItmkChange,
   availableCategories,
   selectedCategories,
   onSelectedCategoriesChange,
@@ -181,6 +185,13 @@ export function FiltersBar({
                 ${showPazar3 ? 'bg-blue-500/15 text-blue-400' : 'text-gray-600 hover:text-gray-400'}`}
             >
               Pazar3
+            </button>
+            <button
+              onClick={() => onShowItmkChange(!showItmk)}
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors
+                ${showItmk ? 'bg-emerald-500/15 text-emerald-400' : 'text-gray-600 hover:text-gray-400'}`}
+            >
+              IT.mk
             </button>
           </div>
 
